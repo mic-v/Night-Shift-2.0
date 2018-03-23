@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.2" orientation="orthogonal" renderorder="right-down" width="11" height="21" tilewidth="64" tileheight="64" infinite="0" nextobjectid="1">
+ <tileset firstgid="1" source="../../../Night_Shift3/Resources/level/Tile_Set.tsx"/>
+ <layer name="Floor" width="11" height="21">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNgGAUwYEMEHlVLvtpRQBoAACFpUZOcAwAA
+  </data>
+ </layer>
+ <layer name="Tile Layer 3" width="11" height="21">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNgIB4oA7EKEVgViPWAWJ8IbDCI1BIDRtWSp3YUkA4ADnBIwpwDAAA=
+  </data>
+ </layer>
+ <layer name="Wall" width="11" height="21">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACmNgGAWjgPbAEoitiMDWQKw/CPBgAACmxjvTnAMAAA==
+  </data>
+ </layer>
+</map>
