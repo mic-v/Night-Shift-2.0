@@ -57,6 +57,7 @@ private:
 	bool roundEnd_;
 	float spawnRate;
 	float spawnLimit;
+	float levelTimer;
 	int level_;
 		//ENEMY POSITIONS
 	Vec2 enemySpawn1;

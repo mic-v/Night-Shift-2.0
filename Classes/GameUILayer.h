@@ -22,6 +22,7 @@ public:
 	//void menuCloseCallback(cocos2d::Ref* pSender);
 private:
 	Label* label;
+	Label* time;
 	Label* ammo;
 	Label* currentWeapon;
 	Label* roundStart;

@@ -28,6 +28,11 @@ bool GameUILayer::init()
 	//});
 
 	//this->addChild(textField);
+
+	Sprite* phone = Sprite::create("UI/phone.png");
+	phone->setPosition(Vec2(vorigin.x + vsize.width - 200, vsize.height - 200));
+	this->addChild(phone);
+
 	label = Label::createWithTTF("Press 'E' to Pick Up", "fonts/Marker Felt.ttf", 24);
 	//label->setCameraMask((unsigned)CameraFlag::USER1);
 	if (label == nullptr)
@@ -45,6 +50,9 @@ bool GameUILayer::init()
 	}
 	label->setVisible(false);
 
+	time = Label::createWithTTF("0:00", "fonts/Marker Felt.ttf", 12);
+	phone->addChild(time);
+
 	currentWeapon = Label::createWithTTF("Barehands", "fonts/Arial.ttf", 24);
 	currentWeapon->setPosition(Vec2(vorigin.x + vsize.width - 200, vorigin.y + 100));
 	this->addChild(currentWeapon);
@@ -55,7 +63,7 @@ bool GameUILayer::init()
 
 	border = Sprite::create("healthbar_empty.png");
 	border->setAnchorPoint(Vec2(0.5, 0.5));
-	border->setPosition(Vec2(vsize.width - 600, vsize.height - 100));
+	border->setPosition(Vec2(vorigin.x + 300, vsize.height - 200));
 	this->addChild(border, 0, "hpBorder");
 
 	bar = Sprite::create("healthbar_healthV2.png");
@@ -74,9 +82,12 @@ bool GameUILayer::init()
 	roundStart->runAction(Hide::create());
 
 	auto roundStartListener = EventListenerCustom::create("roundStart", [=](EventCustom* event) {
-		auto sequence = Sequence::create(Show::create(), DelayTime::create(1.f), Hide::create(), NULL);
+/*		auto sequence = Sequence::create(Show::create(), DelayTime::create(1.f), Hide::create(), NULL);
 		roundStart->runAction(sequence);
-		hpBar->runAction(ProgressFromTo::create(60.0f, 0.0f, 100.0f)); // filling from 30% to 75% in 2 seconds
+		hpBar->runAction(ProgressFromTo::create(60.0f, 0.0f, 100.0f));*/ // filling from 30% to 75% in 2 seconds
+		char* text = static_cast<char*>(event->getUserData());
+		std::string tmp(text);
+		time->setString(tmp);
 	});
 
 	auto ammoListener = EventListenerCustom::create("ammo", [=](EventCustom* event) {
@@ -87,7 +98,7 @@ bool GameUILayer::init()
 	auto weaponChangeListener = EventListenerCustom::create("weapon", [=](EventCustom* event) {
 		char* text = static_cast<char*>(event->getUserData());
 		std::string tmp(text);
-		currentWeapon ->setString(tmp);
+		currentWeapon->setString(tmp);
 	});
 	_eventDispatcher->addEventListenerWithFixedPriority(ammoListener, 1);
 	_eventDispatcher->addEventListenerWithFixedPriority(weaponChangeListener, 2);
