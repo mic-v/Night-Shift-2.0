@@ -78,12 +78,21 @@ bool Projectile::onContactBegin(PhysicsContact & contact)
 		{
 			nodeB->runAction(RemoveSelf::create());
 		}
-		//PLAYER CHECK
-		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
+		if (nodeA->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG)
 		{
 			nodeA->runAction(RemoveSelf::create());
 		}
-		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == PLAYER_TAG)
+		else if (nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeA->getPhysicsBody()->getTag() == WALL_TAG)
+		{
+			nodeB->runAction(RemoveSelf::create());
+		}
+
+		//PLAYER CHECK
+		if (nodeA->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
+		{
+			nodeA->runAction(RemoveSelf::create());
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeA->getPhysicsBody()->getTag() == PLAYER_TAG)
 		{
 			nodeB->runAction(RemoveSelf::create());
 		}

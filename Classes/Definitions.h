@@ -10,7 +10,7 @@ using namespace cocos2d;
 #define RIGHT Vec2(1,0);
 
 #define PLAYER_TAG 1
-#define ENEMY_TAG 1
+#define ENEMY_TAG 2
 #define BULLET_TAG 3
 #define ENEMYBULLET_TAG 4
 #define	PICKUP_TAG 5

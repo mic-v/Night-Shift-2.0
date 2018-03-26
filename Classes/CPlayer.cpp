@@ -43,14 +43,10 @@ bool CPlayer::init(const std::string & fileName)
 	cbody->setDynamic(true);
 	cbody->setRotationEnable(false);
 	cbody->setVelocityLimit(130);
-	//cbody->setContactTestBitmask(0xFFFFFFFF);
-	//cbody->setC
 	cbody->setCategoryBitmask(PLAYER_CATEGORY);
 	cbody->setCollisionBitmask(MASK_PLAYER);
-	//cbody->setContactTestBitmask(MASK_PLAYER);
-	//cbody->setTag(PLAYER_TAG);
 	cbody->setContactTestBitmask(0xFFFFFFFF);
-	//cbody->setGroup(-1);
+	cbody->setGroup(-1);
 	cbody->setTag(PLAYER_TAG);
 	cbody->setVelocity(Vec2(0, 0));
 	this->setTag(PLAYER_TAG);

@@ -60,6 +60,8 @@ private:
 	float levelTimer;
 	int level_;
 		//ENEMY POSITIONS
+	int randomSpawn;
+	int randomWeapon;
 	Vec2 enemySpawn1;
 	Vec2 enemySpawn2;
 	Vec2 enemySpawn3;

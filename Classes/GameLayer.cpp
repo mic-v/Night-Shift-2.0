@@ -31,17 +31,21 @@ bool GameLayer::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+
+	// LEVEL SETUP
 	enemySpawn1 = Vec2(-320, 1728);
 	enemySpawn2 = Vec2(3776, 1728);
 	enemySpawn3 = Vec2(1728, -320);
 	enemySpawn4 = Vec2(1728, 3776);
 
 	initLevel();
+	level_ = 1;
+	levelTimer = 0.f;
+	spawnLimit = level_ * 4;
+	spawnRate = 0.f;
+	randomSpawn = 0;
+	randomWeapon = 0;
 	//map->getLayer("Layer")->setGlobalZOrder(100);
-	enmy = CEnemy::create();
-	//enmy->setTexture("original.png");
-	enmy->setSpawn(enemySpawn3);
-	this->addChild(enmy);
 
 	//CEnemy* enmy2 = CEnemy::create();
 	//enmy2->getPhysicsBody()->setVelocity(Vec2(200, 0));
@@ -53,6 +57,11 @@ bool GameLayer::init()
 	cplayer->setPosition(1700, 1700);
 	this->addChild(cplayer, 0, PLAYERNAME);
 
+	enmy = CEnemy::create();
+	enmy->setPlayer(*cplayer);
+	//enmy->setTexture("original.png");
+	enmy->setSpawn(enemySpawn3);
+	this->addChild(enmy);
 
 	Item* item = Item::create("silencedGun.png");
 	item->setPosition(Vec2(750, 640));
@@ -152,12 +161,12 @@ bool GameLayer::onContactBegin(PhysicsContact & contact)
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
 	if (nodeA && nodeB)
 	{
-		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == 4)
+		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == BULLET_TAG)
 		{
 			findEnemyandHurt(nodeA);
 			return true;
 		}
-		else if (nodeA->getPhysicsBody()->getTag() == 4 && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG)
+		else if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG)
 		{
 			findEnemyandHurt(nodeB);
 			return true;

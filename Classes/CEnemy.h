@@ -14,14 +14,13 @@ public:
 	CREATE_FUNC(CEnemy);
 
 	void setSpawn(Vec2 &);
-
 	void update(float);
 	void updateMovement();
 	void updateAnimation();
 	//MOOD for the A.I.
 	void exitSpawn();
 	void attackPlayer();
-
+	void setPlayer(CPlayer &);
 private:
 	bool onContactBegin(PhysicsContact & contact);
 	bool onContactPost(PhysicsContact & contact);

@@ -85,7 +85,7 @@ void Weapon::initPistolAnimations()
 			ss << "fram-r-00" << i + 1 << ".png";
 			fireframes.pushBack(spritecache->getSpriteFrameByName(ss.str()));
 	}
-	auto animation = Animation::createWithSpriteFrames(fireframes, 0.09f);
+	auto animation = Animation::createWithSpriteFrames(fireframes, 0.15f);
 	animFire = Animate::create(animation);
 	animFire->retain();
 	animFire->setTag(FIRETAG);
@@ -145,7 +145,7 @@ void Weapon::enemyFire(const Vec2 & pos_, const Vec2 & dir)
 				projectile->getPhysicsBody()->setCategoryBitmask(ENEMYBULLET_CATEGORY);
 				projectile->getPhysicsBody()->setCollisionBitmask(MASK_ENEMYBULLET);
 				projectile->getPhysicsBody()->setContactTestBitmask(MASK_ENEMYBULLET);
-				projectile->getPhysicsBody()->setTag(BULLET_TAG);
+				projectile->getPhysicsBody()->setTag(ENEMYBULLET_TAG);
 				if (isPistol_)
 					projectile->setTexture("0305Bullet.png");
 				projectile->setShot(position_, dir_);

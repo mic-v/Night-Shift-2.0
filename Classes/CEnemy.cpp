@@ -23,6 +23,17 @@ bool CEnemy::init()
 	accelL = accelR = accelU = accelD = false;
 	pastSpawnGate = false;
 
+	Weapon* weapon = Weapon::create("silencedGun.png");
+	weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f + 10.f));
+	weapon->setAnchorPoint(Vec2(-0.57f, 0.5f));
+	weapon->setIfPlayer(false);
+	//weapon->set
+	weapons.push_back(weapon);
+	cWeapNum = 0;
+	weapons[cWeapNum]->setVisible(false);
+	weapons[cWeapNum]->unscheduleUpdate();
+	this->addChild(weapon, 3);
+
 	speed = 70;
 	mood = ENEMYMOVESPAWN;
 	auto contactListener = EventListenerPhysicsContact::create();
@@ -74,6 +85,7 @@ void CEnemy::update(float dt)
 		attackPlayer();
 	}
 	updateMovement();
+	updateAnimation();
 }
 
 void CEnemy::updateMovement()
@@ -105,6 +117,29 @@ void CEnemy::updateMovement()
 	accelL = accelR = accelU = accelD = false;
 }
 
+void CEnemy::updateAnimation()
+{
+	if (mood == ENEMYATTACK)
+	{
+		Vec2 rotVec;
+		if (player_ != nullptr)
+		{
+			rotVec = player_->getPosition() - this->getPosition();
+			float rot_ = Vec2::angle(Vec2(0, 1), rotVec.getNormalized()) * (180.f / M_PI) - 90.f;
+			if (rotVec.x < 0)
+			{
+				rot_ = 360 - rot_;
+				weapons[cWeapNum]->setScaleX(-1.f);
+			}
+			else
+			{
+				weapons[cWeapNum]->setScaleX(1.f);
+			}
+			weapons[cWeapNum]->setRotation(rot_);
+		}
+	}
+}
+
 void CEnemy::exitSpawn()
 {
 	if (spawnGate.x == 2486)
@@ -125,6 +160,7 @@ void CEnemy::exitSpawn()
 			accelR = false;
 			accelU = false;
 			accelD = false;
+			weapons[cWeapNum]->setVisible(true);
 		}
 	}
 	else if (spawnGate.x == 896)
@@ -148,6 +184,7 @@ void CEnemy::exitSpawn()
 			//accelR = false;
 			//accelU = false;
 			//accelD = false;
+			weapons[cWeapNum]->setVisible(true);
 		}
 	}
 	else if (spawnGate.y == 2496)
@@ -168,6 +205,7 @@ void CEnemy::exitSpawn()
 			accelR = false;
 			accelU = false;
 			accelD = false;
+			weapons[cWeapNum]->setVisible(true);
 
 		}
 	}
@@ -184,6 +222,7 @@ void CEnemy::exitSpawn()
 			accelR = false;
 			accelU = false;
 			accelD = false;
+			weapons[cWeapNum]->setVisible(true);
 
 		}
 	}
@@ -193,6 +232,12 @@ void CEnemy::exitSpawn()
 void CEnemy::attackPlayer()
 {
 	//accelL = true;
+	weapons[cWeapNum]->enemyFire(this->getPosition(), player_->getPosition() - this->getPosition());
+}
+
+void CEnemy::setPlayer(CPlayer & player)
+{
+	player_ = &(player);
 }
 
 bool CEnemy::onContactBegin(PhysicsContact & contact)

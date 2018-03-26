@@ -50,14 +50,14 @@ bool GameUILayer::init()
 	}
 	label->setVisible(false);
 
-	time = Label::createWithTTF("0:00", "fonts/Marker Felt.ttf", 12);
+	time = Label::createWithTTF("0:00", "fonts/double_pixel-7.ttf", 64);
 	phone->addChild(time);
 
-	currentWeapon = Label::createWithTTF("Barehands", "fonts/Arial.ttf", 24);
+	currentWeapon = Label::createWithTTF("Barehands", "fonts/double_pixel-7.ttf", 64);
 	currentWeapon->setPosition(Vec2(vorigin.x + vsize.width - 200, vorigin.y + 100));
 	this->addChild(currentWeapon);
 
-	ammo = Label::createWithTTF("0 / 0", "fonts/Arial.ttf", 24);
+	ammo = Label::createWithTTF("0 / 0", "fonts/double_pixel-7.ttf", 64);
 	ammo->setPosition(Vec2(vorigin.x + vsize.width - 200, vorigin.y + 50));
 	this->addChild(ammo);
 
