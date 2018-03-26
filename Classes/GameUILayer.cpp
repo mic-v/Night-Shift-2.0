@@ -1,4 +1,5 @@
 #include "GameUILayer.h"
+#include "Definitions.h"
 
 USING_NS_CC;
 using namespace cocos2d;
@@ -90,7 +91,7 @@ bool GameUILayer::init()
 	});
 	_eventDispatcher->addEventListenerWithFixedPriority(ammoListener, 1);
 	_eventDispatcher->addEventListenerWithFixedPriority(weaponChangeListener, 2);
-	_eventDispatcher->addEventListenerWithFixedPriority(roundStartListener, 3);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(roundStartListener, this);
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(GameUILayer::onContactBegin, this);
 	contactListener->onContactPreSolve = CC_CALLBACK_1(GameUILayer::onContactPost, this);
@@ -106,14 +107,13 @@ bool GameUILayer::onContactBegin(PhysicsContact & contact)
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
 	if (nodeA && nodeB)
 	{
-		if ((nodeA->getPhysicsBody()->getTag() == 7 && nodeB->getPhysicsBody()->getTag() == 10) || (nodeA->getPhysicsBody()->getTag() == 10 && nodeB->getPhysicsBody()->getTag() == 7))
+		if ((nodeA->getPhysicsBody()->getTag() == 7 && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG) || (nodeA->getPhysicsBody()->getTag() == PLAYER_TAG && nodeB->getPhysicsBody()->getTag() == 7))
 		{
 			label->setVisible(true);
 			std::cout << "ASDF" << std::endl;
-			return true;
 		}
 	}
-	return false;
+	return true;
 }
 
 bool GameUILayer::onContactPost(PhysicsContact & contact)
@@ -122,10 +122,8 @@ bool GameUILayer::onContactPost(PhysicsContact & contact)
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
 	if (nodeA && nodeB)
 	{
-		if ((nodeA->getPhysicsBody()->getTag() == 7 && nodeB->getPhysicsBody()->getTag() == 10) || (nodeA->getPhysicsBody()->getTag() == 10 && nodeB->getPhysicsBody()->getTag() == 7))
+		if ((nodeA->getPhysicsBody()->getTag() == 7 && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG) || (nodeA->getPhysicsBody()->getTag() == PLAYER_TAG && nodeB->getPhysicsBody()->getTag() == 7))
 		{
-			std::cout << "ASDF1" << std::endl;
-			//return true;
 		}
 	}
 	return true;

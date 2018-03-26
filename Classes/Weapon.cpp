@@ -112,16 +112,7 @@ void Weapon::initPistolAnimations()
 	reload->retain();
 	spritecache->destroyInstance();
 	
-	//Vector<SpriteFrame*> frames;
-	//for (int i = 0; i < 8; i++)
-	//{
-	//	stringstream ss;
-	//	ss << "frame-l-00" << i + 1 << ".png";
-	//	frames.pushBack(spritecache->getSpriteFrameByName(ss.str()));
-	//}
-	//auto animation = Animation::createWithSpriteFrames(frames, 0.09f);
-	//animL = Animate::create(animation);
-	//animL->retain();
+
 }
 
 
@@ -151,7 +142,10 @@ void Weapon::enemyFire(const Vec2 & pos_, const Vec2 & dir)
 			if (isPistol_)
 			{
 				projectile = Projectile::create("0305Bullet.png");
-				projectile->getPhysicsBody()->setTag(5);
+				projectile->getPhysicsBody()->setCategoryBitmask(ENEMYBULLET_CATEGORY);
+				projectile->getPhysicsBody()->setCollisionBitmask(MASK_ENEMYBULLET);
+				projectile->getPhysicsBody()->setContactTestBitmask(MASK_ENEMYBULLET);
+				projectile->getPhysicsBody()->setTag(BULLET_TAG);
 				if (isPistol_)
 					projectile->setTexture("0305Bullet.png");
 				projectile->setShot(position_, dir_);
@@ -219,10 +213,10 @@ void Weapon::update(float dt)
 					//std::cout << position_.x << std::endl;
 					//this->getParent()->getParent()->addChild(projectile);
 					projectile = Projectile::create("0305Bullet.png");
-					if (player)
-						projectile->getPhysicsBody()->setTag(4);
-					else
-						projectile->getPhysicsBody()->setTag(5);
+					projectile->getPhysicsBody()->setCategoryBitmask(PLAYERBULLET_CATEGORY);
+					projectile->getPhysicsBody()->setCollisionBitmask(MASK_PLAYERBULLET);
+					projectile->getPhysicsBody()->setContactTestBitmask(MASK_PLAYERBULLET);
+					projectile->getPhysicsBody()->setTag(BULLET_TAG);
 					if (isPistol_)
 						projectile->setTexture("0305Bullet.png");
 

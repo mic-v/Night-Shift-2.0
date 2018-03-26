@@ -1,5 +1,5 @@
 #include "Projectile.h"
-
+#include "Definitions.h"
 Projectile::Projectile()
 {
 }
@@ -68,52 +68,44 @@ bool Projectile::onContactBegin(PhysicsContact & contact)
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
 	if (nodeA && nodeB)
 	{
-		if (nodeA->getPhysicsBody()->getTag() == 4 && nodeB->getPhysicsBody()->getTag() == 2)
+		std::cout << "I AM SHOOTING" << nodeA->getPhysicsBody()->getTag() << " " << nodeB->getPhysicsBody()->getTag() << std::endl;
+		//WALL CHECK
+		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG)
 		{
 			nodeA->runAction(RemoveSelf::create());
-			return true;
 		}
-		else if (nodeA->getPhysicsBody()->getTag() == 2 && nodeB->getPhysicsBody()->getTag() == 4)
+		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == WALL_TAG)
 		{
 			nodeB->runAction(RemoveSelf::create());
-			return true;
 		}
-
-		if (nodeA->getPhysicsBody()->getTag() == 4 && nodeB->getPhysicsBody()->getTag() == 11)
+		//PLAYER CHECK
+		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
 		{
 			nodeA->runAction(RemoveSelf::create());
-			nodeB->runAction(Sequence::create(TintTo::create(0.1f, Color3B(255, 0, 0)), TintTo::create(0.1f, Color3B(255, 255, 255)), NULL));
-			return true;
 		}
-		else if (nodeA->getPhysicsBody()->getTag() == 11 && nodeB->getPhysicsBody()->getTag() == 4)
+		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == PLAYER_TAG)
 		{
 			nodeB->runAction(RemoveSelf::create());
-			nodeA->runAction(Sequence::create(TintTo::create(0.1f, Color3B(255, 0, 0)), TintTo::create(0.1f, Color3B(255, 255, 255)), NULL));
-			return true;
 		}
-		if (nodeA->getPhysicsBody()->getTag() == 5 && nodeB->getPhysicsBody()->getTag() == 10)
+		//ENEMY CHECK
+		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG)
 		{
 			nodeA->runAction(RemoveSelf::create());
-			nodeB->runAction(Sequence::create(TintTo::create(0.1f, Color3B(255, 0, 0)), TintTo::create(0.1f, Color3B(255, 255, 255)), NULL));
-
-			return true;
 		}
-		else if (nodeA->getPhysicsBody()->getTag() == 10 && nodeB->getPhysicsBody()->getTag() == 5)
+		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == ENEMY_TAG)
 		{
 			nodeB->runAction(RemoveSelf::create());
-			nodeA->runAction(Sequence::create(TintTo::create(0.1f, Color3B(255, 0, 0)), TintTo::create(0.1f, Color3B(255, 255, 255)), NULL));
-			return true;
 		}
 	}
-	return false;
+	return true;
 }
 
 bool Projectile::onContactPost(PhysicsContact &)
 {
-	return false;
+	return true;
 }
 
 bool Projectile::onContactSeparate(PhysicsContact &)
 {
-	return false;
+	return true;
 }

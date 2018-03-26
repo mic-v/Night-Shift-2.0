@@ -43,21 +43,24 @@ bool CPlayer::init(const std::string & fileName)
 	cbody->setDynamic(true);
 	cbody->setRotationEnable(false);
 	cbody->setVelocityLimit(130);
+	//cbody->setContactTestBitmask(0xFFFFFFFF);
+	//cbody->setC
+	cbody->setCategoryBitmask(PLAYER_CATEGORY);
+	cbody->setCollisionBitmask(MASK_PLAYER);
+	//cbody->setContactTestBitmask(MASK_PLAYER);
+	//cbody->setTag(PLAYER_TAG);
 	cbody->setContactTestBitmask(0xFFFFFFFF);
-	cbody->setCategoryBitmask(0x02);
-	cbody->setCollisionBitmask(0x01);
-	cbody->setTag(10);
+	//cbody->setGroup(-1);
+	cbody->setTag(PLAYER_TAG);
 	cbody->setVelocity(Vec2(0, 0));
-	this->setTag(10);
+	this->setTag(PLAYER_TAG);
 	this->setPhysicsBody(cbody);
 
 	hspeed = 70;
 	vspeed = 70;
+
 	initAnimations();
-	//weapon = Weapon::create("silencedGun.png");
-	//weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f + 10.f));
-	//weapon->setAnchorPoint(Vec2(-0.65f, 0.5f));
-	//this->addChild(weapon, 3);
+
 	auto contactListene = EventListenerPhysicsContact::create();
 	contactListene->onContactBegin = CC_CALLBACK_1(CPlayer::onContactBegin, this);
 	contactListene->onContactPreSolve = CC_CALLBACK_1(CPlayer::onContactPost, this);
@@ -295,8 +298,8 @@ void CPlayer::updateAnimation(float dt)
 			{
 				cOrientation_ = orientation_;
 			}
-			//string tmp = "CharacterAnimations/Player/Walking/frame-" + cOrientation_ + "-00" + to_string(animationCounter) + ".png";
-			string tmp = "CharacterAnimations/Player/Test/frame" + to_string(animationCounter) + ".png";
+			string tmp = "CharacterAnimations/Player/Walking/frame-" + cOrientation_ + "-00" + to_string(animationCounter) + ".png";
+			//string tmp = "CharacterAnimations/Player/Walking/frame" + to_string(animationCounter) + ".png";
 			this->setTexture(tmp);
 		}
 	}
@@ -319,53 +322,20 @@ void CPlayer::update(float dt)
 	handleMovement(dt);
 	updateCamera(dt);
 	updateAnimation(dt);
-	auto p = this->getPosition() - Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f + 64);
+	auto p = this->getPosition() - Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f);
 	p = CC_POINT_POINTS_TO_PIXELS(p);
 	this->setLocalZOrder(-((p.y + 64) / 64));
 }
 bool CPlayer::onContactBegin(PhysicsContact & contact)
 {
-	//if (Entity::onContactBegin(contact) == false)
-	//{
-	//	return false;
-	//	std::cout << "yes" << std::endl;
-	//}
-	auto nodeA = contact.getShapeA()->getBody()->getNode();
-	auto nodeB = contact.getShapeB()->getBody()->getNode();
-	if (nodeA && nodeB)
-	{
-		if ((nodeA->getPhysicsBody()->getTag() == 10 && nodeB->getPhysicsBody()->getTag() == 2) || (nodeA->getPhysicsBody()->getTag() == 2 && nodeB->getPhysicsBody()->getTag() == 10))
-		{
-			//if (velNorm.x == -1 || velNorm.x == 1)
-			//{
-			//	hspeed = 0;
-			//}
-			//else if (velNorm.y == -1 || velNorm.y == 1)
-			//{
-			//	vspeed = 0;
-			//}
-			//this->setPosition(previousPos);
-			//this->stopAllActions();
-			return true;
-		}
-		if ((nodeA->getPhysicsBody()->getTag() == 7 && nodeB->getPhysicsBody()->getTag() == 10) || (nodeA->getPhysicsBody()->getTag() == 10 && nodeB->getPhysicsBody()->getTag() == 7))
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return true;
 }
 
 bool CPlayer::onContactPost(PhysicsContact & contact)
 {
 	auto nodeA = contact.getShapeA()->getBody()->getNode();
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
-	if ((nodeA->getPhysicsBody()->getTag() == 10 && nodeB->getPhysicsBody()->getTag() == 2) || (nodeA->getPhysicsBody()->getTag() == 2 && nodeB->getPhysicsBody()->getTag() == 10))
-	{
-		return true;
-	}
-	if ((nodeA->getPhysicsBody()->getTag() == 7 && nodeB->getPhysicsBody()->getTag() == 10) || (nodeA->getPhysicsBody()->getTag() == 10 && nodeB->getPhysicsBody()->getTag() == 7))
+	if ((nodeA->getPhysicsBody()->getTag() == 7 && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG) || (nodeA->getPhysicsBody()->getTag() == PLAYER_TAG && nodeB->getPhysicsBody()->getTag() == 7))
 	{
 		if (INPUTS->getKey(KeyCode::KEY_E))
 		{
@@ -395,16 +365,10 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 		}
 		return false;
 	}
-	return false;
+	return true;
 }
 
 bool CPlayer::onContactSeparate(PhysicsContact & contact)
 {
-	auto nodeA = contact.getShapeA()->getBody()->getNode();
-	auto nodeB = contact.getShapeB()->getBody()->getNode();
-	if ((nodeA->getPhysicsBody()->getTag() == 10 && nodeB->getPhysicsBody()->getTag() == 2) || (nodeA->getPhysicsBody()->getTag() == 2 && nodeB->getPhysicsBody()->getTag() == 10))
-	{
-		return true;
-	}
-	return false;
+	return true;
 }

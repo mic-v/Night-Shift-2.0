@@ -21,6 +21,8 @@ Enemy::Enemy()
 	accelR = false;
 	accelU = false;
 	accelD = false;
+	dyingAnim = false;
+	pastSpawnGate = false;
 }
 
 Enemy::~Enemy()
@@ -47,17 +49,16 @@ bool Enemy::init()
 		return false;
 	}
 	this->setTexture("e-idleR.png");
-	PhysicsBody* body = PhysicsBody::createBox(this->getContentSize());
+	PhysicsBody* body = PhysicsBody::createBox(this->getContentSize(), PhysicsMaterial(1.f, 1.f, 1.f));
 	body->setDynamic(true);
 	body->setRotationEnable(false);
 	body->setVelocityLimit(130);
-	body->setContactTestBitmask(0xFFFFFFFF);
-	body->setCategoryBitmask(0x02);
-	body->setCollisionBitmask(0x01);
-	body->setTag(11);
+	//body->setCategoryBitmask(ENEMY_CATEGORY);
+	//body->setCollisionBitmask(MASK_ENEMY);
+	body->setContactTestBitmask(-1);
+	body->setTag(ENEMY_TAG);
 	body->setVelocity(Vec2(0, 0));
 	this->setPhysicsBody(body);
-	//this-	setScaleY(-1.f);
 
 	vspeed = 70;
 	hspeed = 70;
@@ -74,19 +75,6 @@ bool Enemy::init()
 	weapons[cWeapNum]->setVisible(false);
 	weapons[cWeapNum]->unscheduleUpdate();
 	this->addChild(weapon, 3);
-
-	//direction = Vec2(0, 1);
-	//search = DrawNode::create();
-	//search->setPosition(Vec2(this->getContentSize().width * 0.5f,this->getContentSize().height * 0.5f));
-	//search->drawLine(Vec2(0.f, 0.f), Vec2(6.f * 30, 22.39f * 30), Color4F::RED);
-	//search->drawLine(Vec2(0.f, 0.f), Vec2(-6.f * 30, 22.39f * 30), Color4F::RED);
-	//this->addChild(search);
-	////float rad = 90 * (M_PI / 180.f);
-	////direction.x = sinf(rad);
-	////direction.y = cosf(rad);
-	////search->setRotation(90);
-	////weapon->addChild(search);
-	//fovDistance = 22.39f * 30.0f;
 
 	auto contactListene = EventListenerPhysicsContact::create();
 	contactListene->onContactBegin = CC_CALLBACK_1(Enemy::onContactBegin, this);
@@ -112,63 +100,22 @@ void Enemy::update(float dt)
 
 void Enemy::sleep(float dt )
 {
-	if (spawnPosition.x == 1728)
+
+	if (this->getPosition().x >= 2732 - 300)
 	{
-		if (spawnPosition.y <= 1728)
-		{
-			accelU = true;
-			if (this->getPosition().y >= 1000)
-			{
-				mood = ESEEK;
-				accelL = false;
-				accelR = false;
-				accelU = false;
-				accelD = false;
-				this->getPhysicsBody()->setVelocity(Vec2(0, 0));
-			}
-		}
-		else
-		{
-			accelD = true;
-			if (this->getPosition().y <= 2000)
-			{
-				mood = ESEEK;
-				accelL = false;
-				accelR = false;
-				accelU = false;
-				accelD = false;
-				this->getPhysicsBody()->setVelocity(Vec2(0, 0));
-			}
-		}
+		accelL = true;
 	}
-	else if (spawnPosition.y == 1728)
+	else
 	{
-		if (spawnPosition.x <= 1728)
-		{
-			accelR = true;
-			if (this->getPosition().x >= 1000)
-			{
-				mood = ESEEK;
-				accelL = false;
-				accelR = false;
-				accelU = false;
-				accelD = false;
-				this->getPhysicsBody()->setVelocity(Vec2(0, 0));
-			}
-		}
-		else
-		{
-			accelL = true;
-			if (this->getPosition().x <= 2000)
-			{
-				mood = ESEEK;
-				accelL = false;
-				accelR = false;
-				accelU = false;
-				accelD = false;
-				this->getPhysicsBody()->setVelocity(Vec2(0, 0));
-			}
-		}
+		pastSpawnGate = true;
+		accelL = false;
+		accelR = true;
+		//mood = ESEEK;
+		//accelL = false;
+		//accelR = false;
+		//accelU = false;
+		//accelD = false;
+		//this->getPhysicsBody()->setVelocity(Vec2(0, 0));
 	}
 }
 
@@ -307,6 +254,7 @@ void Enemy::initAnimations()
 	}
 	animation = Animation::createWithSpriteFrames(die, 0.09f);
 	dying = Animate::create(animation);
+	dying->setTag(59);
 	dying->retain();
 }
 
@@ -357,13 +305,6 @@ void Enemy::handleMovement(float dt)
 
 bool Enemy::playerInFOV()
 {
-	//Vec2 pos = player->getPosition() - this->getPosition();
-	//pos = Vec2(pos.x / sqrt(pos.x * pos.x + pos.y * pos.y), pos.y / sqrt(pos.x * pos.x + pos.y * pos.y));
-	//float posProduct = pos.x * direction.x + pos.y * direction.y;
-	//float dirProduct = cosf((15.f *  M_PI / 180.f));
-	//if (posProduct > dirProduct)
-	//	return true;
-	//return false;
 	return true;
 }
 
@@ -377,58 +318,42 @@ void Enemy::setVisionRotation(float angle)
 
 bool Enemy::onContactBegin(PhysicsContact & contact)
 {
-	//auto nodeA = contact.getShapeA()->getBody()->getNode();
-	//auto nodeB = contact.getShapeB()->getBody()->getNode();
-	//if (nodeA && nodeB)
-	//{
-	//	if (nodeA->getPhysicsBody()->getTag() == 11 && nodeB->getPhysicsBody()->getTag() == 4)
-	//	{
-	//		this->health -= 1.f;
-	//		if (this->health == 0.0f)
-	//		{
-	//			std::cout << "dead" << std::endl;
-	//			mood = 4;
-	//			nodeA->stopAllActions();
-	//			nodeA->getPhysicsBody()->setVelocityLimit(0);
-	//			nodeA->getPhysicsBody()->setVelocity(Vec2(0, 0));
-	//			/*this->runAction(RepeatForever::create(dying));*/
-	//			auto seq = Sequence::create(dying, RemoveSelf::create(), nullptr);
-	//			nodeA->runAction(seq);
-	//		}
-	//	}
-	//	else if (nodeA->getPhysicsBody()->getTag() == 4 && nodeB->getPhysicsBody()->getTag() == 11)
-	//	{
-	//		/*nodeB->removeFromParentAndCleanup(true);*/
-	//		std::cout << nodeB->getTag() << "my leg " << std::endl;
-	//		this->health -= 1.f;
-	//		if (this->health == 0.0f)
-	//		{
-	//			//this->runAction(dying);
-	//			mood = 4;
-	//			nodeB->stopAllActions();
-	//			nodeB->getPhysicsBody()->setVelocityLimit(0);
-	//			nodeB->getPhysicsBody()->setVelocity(Vec2(0, 0));
-
-	//			//this->runAction(RepeatForever::create(dying));
-	//			auto seq = Sequence::create(dying, RemoveSelf::create(), nullptr);
-	//			nodeB->runAction(seq);
-
-	//		}
-	//		std::cout << health << std::endl;
-	//	}
-	//}
-	//return true;
+	auto nodeA = contact.getShapeA()->getBody()->getNode();
+	auto nodeB = contact.getShapeB()->getBody()->getNode();
+	if (nodeA && nodeB)
+	{
+		if ((nodeA->getPhysicsBody()->getTag() == WALL_TAG && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG) || (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG))
+		{
+			std::cout << "YES BUT" << nodeA->getPhysicsBody()->getTag() << " " << nodeB->getPhysicsBody()->getTag() << std::endl;
+		}
+	}
 	return true;
-
 }
 
 bool Enemy::onContactPost(PhysicsContact & contact )
 {
+	auto nodeA = contact.getShapeA()->getBody()->getNode();
+	auto nodeB = contact.getShapeB()->getBody()->getNode();
+	if (nodeA && nodeB)
+	{
+		if ((nodeA->getPhysicsBody()->getTag() == WALL_TAG && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG) || (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG))
+		{
+		}
+	}
 	return true;
 }
 
 bool Enemy::onContactSeparate(PhysicsContact & contact)
 {
+	auto nodeA = contact.getShapeA()->getBody()->getNode();
+	auto nodeB = contact.getShapeB()->getBody()->getNode();
+	if (nodeA && nodeB)
+	{
+		if ((nodeA->getPhysicsBody()->getTag() == WALL_TAG && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG) || (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG))
+		{
+
+		}
+	}
 	return true;
 }
 
@@ -446,8 +371,24 @@ void Enemy::damageEnemy()
 
 void Enemy::removeEnemy()
 {
-	auto seq = Sequence::create(dying, RemoveSelf::create(), nullptr);
-	this->runAction(seq);
+	//Stop enemy's state 
+	mood = 5;
+
+	this->getPhysicsBody()->setVelocity(Vec2(0, 0));
+	this->getPhysicsBody()->setVelocityLimit(0);
+	this->getPhysicsBody()->removeFromWorld();
+	if (!dyingAnim)
+	{
+		dyingAnim = true;
+		this->stopAllActions();
+		dyingSeq = Sequence::create(dying, RemoveSelf::create(), nullptr);
+		this->runAction(dyingSeq);
+	}
+	else
+	{
+		
+	}
+	
 }
 
 //void Enemy::ifDead()

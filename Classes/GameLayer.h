@@ -6,6 +6,7 @@
 #include "Entity.h"
 #include "Item.h"
 #include "CPlayer.h"
+#include "CEnemy.h"
 #include "Enemy.h"
 using namespace cocos2d;
 
@@ -35,27 +36,35 @@ public:
 	bool wallCollision;
 private:
 	void initLevel();
+	void findEnemyandHurt(Node* node);
 
 
 	Vec2 velocity;
 	Vec2 previousPos;
 	Label* label;
+
+	//Level Setup
 	CPlayer* cplayer;
+	CEnemy* enmy;
 	TMXTiledMap* map;
-	Sprite* _tamara;
-	Sprite* tile_;
+
 
 	std::vector<Sprite*> tiles;
-	std::vector<Enemy*> enemyList;
 
-	void findEnemyandHurt(Node* node);
-	//ENEMY POSITIONS
+	//Round Variables
+		//Bool start and end
+	bool roundStart_;
+	bool roundEnd_;
+	float spawnRate;
+	float spawnLimit;
+	int level_;
+		//ENEMY POSITIONS
 	Vec2 enemySpawn1;
 	Vec2 enemySpawn2;
 	Vec2 enemySpawn3;
 	Vec2 enemySpawn4;
-	//Bool
-	bool roundStart_;
+
+	std::vector<Enemy*> enemyList;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

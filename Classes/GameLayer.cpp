@@ -31,28 +31,41 @@ bool GameLayer::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	enemySpawn1 = Vec2(-320, 1728);
+	enemySpawn2 = Vec2(3776, 1728);
+	enemySpawn3 = Vec2(1728, -320);
+	enemySpawn4 = Vec2(1728, 3776);
+
 	initLevel();
 	//map->getLayer("Layer")->setGlobalZOrder(100);
+	enmy = CEnemy::create();
+	//enmy->setTexture("original.png");
+	enmy->setSpawn(enemySpawn3);
+	this->addChild(enmy);
+
+	//CEnemy* enmy2 = CEnemy::create();
+	//enmy2->getPhysicsBody()->setVelocity(Vec2(200, 0));
+	////enmy2->setPosition(1300, 1700);
+	//this->addChild(enmy2, 0);
+
 	cplayer = CPlayer::create("original.png");
 	cplayer->retain();
-	cplayer->setPosition(640, 640);
+	cplayer->setPosition(1700, 1700);
 	this->addChild(cplayer, 0, PLAYERNAME);
+
 
 	Item* item = Item::create("silencedGun.png");
 	item->setPosition(Vec2(750, 640));
 	this->addChild(item, 2);
 
 	//Enemy* enemy = Enemy::create();
-	//this->addChild(enemy);
-	//enemy->setPosition(Vec2(3000, 1600));
-	//enemy->setPlayer(cplayer);
-	//enemy->setIfVertical(false);
-	//enemy->setSpawn(Vec2(950, 3000));
-
-	enemySpawn1 = Vec2(-320, 1728);
-	enemySpawn2 = Vec2(3456 + 320, 1728);
-	enemySpawn3 = Vec2(1728, -320);
-	enemySpawn4 = Vec2(1728, 3456 + 320);
+	////enemy->retain();
+	//this->addChild(enemy,0);
+	//enemy->setPosition(Vec2(3692, 1728));
+	////enemy->setPlayer(cplayer);
+	////enemy->setIfVertical(false);
+	////enemy->setSpawn(Vec2(3692,1728));
+	////enemyList.push_back(enemy);
 
 	roundStart_ = false;
 	dontmove = false;
@@ -67,11 +80,6 @@ bool GameLayer::init()
 	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
 
-	//this->addChild(camTarget->target);
-	//this->runAction(camTarget->camera);
-	////sceneFollow = Follow::create(player);
-
-	//this->addChild(node);
 
 	return true;
 }
@@ -90,51 +98,11 @@ void GameLayer::update(float dt)
 			roundStart_ = true;
 		}
 	}
-	else
+	else if (roundStart_ && !roundEnd_)
 	{
-		if (enemyList.size() < 3)
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				if (i == 0)
-				{
-					Enemy* enemy = Enemy::create();
-					enemy->setTag(enemyList.size());
-					this->addChild(enemy);
-					enemy->setPosition(enemySpawn1);
-					enemy->setSpawn(enemySpawn1);
-					enemyList.push_back(enemy);
-				}
-				if (i == 1)
-				{
-					Enemy* enemy = Enemy::create();
-					this->addChild(enemy);
-					enemy->setTag(enemyList.size());
-					enemy->setPosition(enemySpawn2);
-					enemy->setSpawn(enemySpawn2);
-					enemyList.push_back(enemy);
-				}
-				if (i == 2)
-				{
-					Enemy* enemy = Enemy::create();
-					this->addChild(enemy);
-					enemy->setTag(enemyList.size());
-					enemy->setPosition(enemySpawn3);
-					enemy->setSpawn(enemySpawn3);
-					enemyList.push_back(enemy);
-				}
-				if (i == 3)
-				{
-					Enemy* enemy = Enemy::create();
-					this->addChild(enemy);
-					enemy->setTag(enemyList.size());
-					enemy->setPosition(enemySpawn4);
-					enemy->setSpawn(enemySpawn4);
-					enemyList.push_back(enemy);
-				}
-			}
-		}
+
 	}
+
 }
 
 
@@ -144,30 +112,18 @@ bool GameLayer::onContactBegin(PhysicsContact & contact)
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
 	if (nodeA && nodeB)
 	{
-		if (nodeA->getPhysicsBody()->getTag() == 11 && nodeB->getPhysicsBody()->getTag() == 4)
+		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == 4)
 		{
-			//this->health -= 1.f;
-			//if (this->health == 0.0f)
-			//{
-			//	std::cout << "dead" << std::endl;
-			//	mood = 4;
-			//	nodeA->stopAllActions();
-			//	nodeA->getPhysicsBody()->setVelocityLimit(0);
-			//	nodeA->getPhysicsBody()->setVelocity(Vec2(0, 0));
-			//	/*this->runAction(RepeatForever::create(dying));*/
-			//	auto seq = Sequence::create(dying, RemoveSelf::create(), nullptr);
-			//	nodeA->runAction(seq);
-			//}
 			findEnemyandHurt(nodeA);
-			std::cout << nodeA->getTag() << "asd" << std::endl;
+			return true;
 		}
-		else if (nodeA->getPhysicsBody()->getTag() == 4 && nodeB->getPhysicsBody()->getTag() == 11)
+		else if (nodeA->getPhysicsBody()->getTag() == 4 && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG)
 		{
-			std::cout << nodeB->getTag() << "asd" << std::endl;
 			findEnemyandHurt(nodeB);
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 bool GameLayer::onContactPost(PhysicsContact & contact)
@@ -194,9 +150,6 @@ void GameLayer::menuCloseCallback(Ref* pSender)
 
 void GameLayer::repositionSprite(float dt)
 {
-	auto p = cplayer->getPosition() - Vec2(cplayer->getContentSize().width * 0.5f, cplayer->getContentSize().height * 0.5f + 5);
-	p = CC_POINT_POINTS_TO_PIXELS(p);
-	cplayer->setPositionZ(-((p.y + 64) / 64));
 
 }
 
@@ -235,7 +188,8 @@ void GameLayer::initLevel()
 				Sprite* tile = Sprite::create(filePath);
 				tile->setAnchorPoint(Vec2(0, 0));
 				tile->setPosition(Vec2(i * 64, (layer64Top->getLayerSize().height - j - 1) * 64));
-				auto p = tile->getPosition() - Vec2(tile->getContentSize().width * 0.5f, tile->getContentSize().height * 0.5f);
+				//auto p = tile->getPosition() - Vec2(tile->getContentSize().width * 0.5f, tile->getContentSize().height * 0.5f);
+				auto p = tile->getPosition();
 				p = CC_POINT_POINTS_TO_PIXELS(p);
 				tile->setLocalZOrder(-((p.y + 64) / 64));
 				this->addChild(tile);
@@ -258,9 +212,8 @@ void GameLayer::initLevel()
 						auto tilePhysics = PhysicsBody::createBox(Size(wallSize * 64, 64), PhysicsMaterial(1.0f, 1.0f, 0.0f), offset);
 						tilePhysics->setDynamic(false);
 						tilePhysics->setContactTestBitmask(0xFFFFFFFF);
-						tilePhysics->setCategoryBitmask(0x01);
-						tilePhysics->setCollisionBitmask(0x02);
-						tilePhysics->setTag(2);
+						tilePhysics->setTag(WALL_TAG);
+						tilePhysics->setGroup(-2);
 						getTile->setPhysicsBody(tilePhysics);
 						getTile->setZOrder(-1000);
 					}
@@ -268,17 +221,16 @@ void GameLayer::initLevel()
 					{
 						auto wallSize = properties2["Horizontal"].asInt();
 						auto getTile = layerMeta->getTileAt(Vec2(i, j));
-						Vec2 offset = Vec2(0, -(64));
+						Vec2 offset = Vec2(0, -(48));
 						if (wallSize % 2 == 0)
 						{
 							offset += Vec2(32, 0);
 						}
 						auto tilePhysics = PhysicsBody::createBox(Size(wallSize * 64, 64), PhysicsMaterial(1.0f, 1.0f, 0.0f), offset);
 						tilePhysics->setDynamic(false);
+						tilePhysics->setGroup(-2);
 						tilePhysics->setContactTestBitmask(0xFFFFFFFF);
-						tilePhysics->setCategoryBitmask(0x01);
-						tilePhysics->setCollisionBitmask(0x02);
-						tilePhysics->setTag(2);
+						tilePhysics->setTag(WALL_TAG);
 						getTile->setPhysicsBody(tilePhysics);
 						getTile->setZOrder(-1000);
 					}
@@ -293,10 +245,11 @@ void GameLayer::initLevel()
 						}
 						auto tilePhysics = PhysicsBody::createBox(Size(64, wallSize * 64), PhysicsMaterial(1.0f, 1.0f, 0.0f), offset);
 						tilePhysics->setDynamic(false);
+						tilePhysics->setGroup(-2);
+						//tilePhysics->setCategoryBitmask(WALL_CATEGORY);
+						//tilePhysics->setCollisionBitmask(MASK_WALL);
 						tilePhysics->setContactTestBitmask(0xFFFFFFFF);
-						tilePhysics->setCategoryBitmask(0x01);
-						tilePhysics->setCollisionBitmask(0x02);
-						tilePhysics->setTag(2);
+						tilePhysics->setTag(WALL_TAG);
 						getTile->setPhysicsBody(tilePhysics);
 						getTile->setZOrder(-1000);
 					}

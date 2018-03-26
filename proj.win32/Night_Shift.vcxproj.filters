@@ -78,6 +78,9 @@
     <ClCompile Include="..\Classes\MainMenu.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\CEnemy.cpp">
+      <Filter>src\Objects\Character</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -133,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="..\Classes\MainMenu.h">
       <Filter>src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CameraTarget.h">
+      <Filter>src\Objects\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CEnemy.h">
+      <Filter>src\Objects\Character</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

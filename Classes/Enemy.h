@@ -46,13 +46,15 @@ private:
 	bool reachedY;
 	bool reachedSpawnX;//
 	bool reachedSpawnY;
-	
-	//SPEED
+	bool dyingAnim;
+	bool pastSpawnGate;
+	//Physics Portion
 	float vspeed;
 	float hspeed;
 	bool accelL;
 	bool accelR;
 	bool accelU;
+	//PhysicsBody* body;
 	bool accelD;
 
 	//void ifDead();
@@ -66,6 +68,7 @@ private:
 
 	SpriteFrame* idleFrameL;
 	SpriteFrame* idleFrameR;
+	Sequence* dyingSeq;
 };
 
 #endif // !_ENEMY_H_
