@@ -55,7 +55,7 @@ bool Enemy::init()
 	body->setVelocityLimit(130);
 	//body->setCategoryBitmask(ENEMY_CATEGORY);
 	//body->setCollisionBitmask(MASK_ENEMY);
-	body->setContactTestBitmask(-1);
+	body->setContactTestBitmask(-3);
 	body->setTag(ENEMY_TAG);
 	body->setVelocity(Vec2(0, 0));
 	this->setPhysicsBody(body);

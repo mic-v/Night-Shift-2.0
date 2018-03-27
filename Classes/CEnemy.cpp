@@ -16,7 +16,7 @@ bool CEnemy::init()
 	body->setCategoryBitmask(ENEMY_CATEGORY);
 	body->setCollisionBitmask(MASK_ENEMY);
 	body->setContactTestBitmask(0xFFFFFFFF);
-	body->setGroup(-2);
+	body->setGroup(-3);
 	body->setTag(ENEMY_TAG);
 	this->setPhysicsBody(body);
 

@@ -32,8 +32,6 @@ bool Projectile::init(const std::string & fileName)
 	PhysicsBody* body = PhysicsBody::createBox(this->getContentSize());
 	body->setDynamic(true);
 	body->setContactTestBitmask(0xFFFFFFFF);
-	body->setCategoryBitmask(0x02);
-	body->setCollisionBitmask(0x01);
 	this->setPhysicsBody(body);
 
 	auto contactListene = EventListenerPhysicsContact::create();
@@ -104,6 +102,17 @@ bool Projectile::onContactBegin(PhysicsContact & contact)
 		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == ENEMY_TAG)
 		{
 			nodeB->runAction(RemoveSelf::create());
+		}
+
+		if (nodeA->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG)
+		{
+			//nodeA->runAction(RemoveSelf::create());
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeA->getPhysicsBody()->getTag() == ENEMY_TAG)
+		{
+			//nodeB->runAction(RemoveSelf::create());
+			return false;
 		}
 	}
 	return true;

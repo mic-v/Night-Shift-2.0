@@ -142,10 +142,10 @@ void Weapon::enemyFire(const Vec2 & pos_, const Vec2 & dir)
 			if (isPistol_)
 			{
 				projectile = Projectile::create("0305Bullet.png");
-				projectile->getPhysicsBody()->setCategoryBitmask(ENEMYBULLET_CATEGORY);
-				projectile->getPhysicsBody()->setCollisionBitmask(MASK_ENEMYBULLET);
-				projectile->getPhysicsBody()->setContactTestBitmask(MASK_ENEMYBULLET);
+				//projectile->getPhysicsBody()->setCategoryBitmask(ENEMYBULLET_CATEGORY);
+				//projectile->getPhysicsBody()->setCollisionBitmask(MASK_ENEMYBULLET);
 				projectile->getPhysicsBody()->setTag(ENEMYBULLET_TAG);
+				projectile->getPhysicsBody()->setGroup(-1);
 				if (isPistol_)
 					projectile->setTexture("0305Bullet.png");
 				projectile->setShot(position_, dir_);

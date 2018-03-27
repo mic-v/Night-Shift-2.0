@@ -57,11 +57,11 @@ bool GameLayer::init()
 	cplayer->setPosition(1700, 1700);
 	this->addChild(cplayer, 0, PLAYERNAME);
 
-	enmy = CEnemy::create();
-	enmy->setPlayer(*cplayer);
-	//enmy->setTexture("original.png");
-	enmy->setSpawn(enemySpawn3);
-	this->addChild(enmy);
+	//enmy = CEnemy::create();
+	//enmy->setPlayer(*cplayer);
+	////enmy->setTexture("original.png");
+	//enmy->setSpawn(enemySpawn3);
+	//this->addChild(enmy);
 
 	Item* item = Item::create("silencedGun.png");
 	item->setPosition(Vec2(750, 640));
@@ -113,7 +113,49 @@ void GameLayer::update(float dt)
 	else if (roundStart_ && !roundEnd_)
 	{
 		levelTimer += dt;
-		std::cout << (int)levelTimer << std::endl;
+		if (enemyList.size() <= spawnLimit)
+		{
+			spawnRate += dt;
+			if (spawnRate >= 5.0)
+			{
+				spawnRate = 0;
+				randomSpawn = RandomHelper::random_int(1, 4);
+				if (randomSpawn == 1)
+				{
+					CEnemy* enemy = CEnemy::create();
+					enemy->setPlayer(*cplayer);
+					enemy->setSpawn(enemySpawn1);
+					this->addChild(enemy);
+					enemyList.push_back(enemy);
+				}
+				else if (randomSpawn == 2)
+				{
+					CEnemy* enemy = CEnemy::create();
+					enemy->setPlayer(*cplayer);
+					enemy->setSpawn(enemySpawn2);
+					this->addChild(enemy);
+					enemyList.push_back(enemy);
+				}
+				else if (randomSpawn == 3)
+				{
+					CEnemy* enemy = CEnemy::create();
+					enemy->setPlayer(*cplayer);
+					enemy->setSpawn(enemySpawn3);
+					this->addChild(enemy);
+					enemyList.push_back(enemy);
+				}
+				else if (randomSpawn == 4)
+				{
+					CEnemy* enemy = CEnemy::create();
+					enemy->setPlayer(*cplayer);
+					enemy->setSpawn(enemySpawn4);
+					this->addChild(enemy);
+					enemyList.push_back(enemy);
+				}
+
+			}
+		}
+
 		if ((int)levelTimer == MAXTIME * 0.2)
 		{
 			std::string tmp = "1 AM";
@@ -262,7 +304,7 @@ void GameLayer::initLevel()
 						tilePhysics->setDynamic(false);
 						tilePhysics->setContactTestBitmask(0xFFFFFFFF);
 						tilePhysics->setTag(WALL_TAG);
-						tilePhysics->setGroup(-2);
+						tilePhysics->setGroup(-3);
 						getTile->setPhysicsBody(tilePhysics);
 						getTile->setZOrder(-1000);
 					}
@@ -277,7 +319,7 @@ void GameLayer::initLevel()
 						}
 						auto tilePhysics = PhysicsBody::createBox(Size(wallSize * 64, 64), PhysicsMaterial(1.0f, 1.0f, 0.0f), offset);
 						tilePhysics->setDynamic(false);
-						tilePhysics->setGroup(-2);
+						tilePhysics->setGroup(-3);
 						tilePhysics->setContactTestBitmask(0xFFFFFFFF);
 						tilePhysics->setTag(WALL_TAG);
 						getTile->setPhysicsBody(tilePhysics);
@@ -294,7 +336,7 @@ void GameLayer::initLevel()
 						}
 						auto tilePhysics = PhysicsBody::createBox(Size(64, wallSize * 64), PhysicsMaterial(1.0f, 1.0f, 0.0f), offset);
 						tilePhysics->setDynamic(false);
-						tilePhysics->setGroup(-2);
+						tilePhysics->setGroup(-3);
 						//tilePhysics->setCategoryBitmask(WALL_CATEGORY);
 						//tilePhysics->setCollisionBitmask(MASK_WALL);
 						tilePhysics->setContactTestBitmask(0xFFFFFFFF);
@@ -312,18 +354,18 @@ void GameLayer::initLevel()
 
 void GameLayer::findEnemyandHurt(Node* node)
 {
-	for (int i = 0; i < enemyList.size(); i++)
-	{
-		if (enemyList[i] == node)
-		{
-			enemyList[i]->damageEnemy();
-			if (enemyList[i]->getHealth() == 0)
-			{
-				enemyList[i]->removeEnemy();
-				enemyList.erase(enemyList.begin() + i);
-				return;
-			}
-			return;
-		}
-	}
+	//for (int i = 0; i < enemyList.size(); i++)
+	//{
+	//	if (enemyList[i] == node)
+	//	{
+	//		enemyList[i]->damageEnemy();
+	//		if (enemyList[i]->getHealth() == 0)
+	//		{
+	//			enemyList[i]->removeEnemy();
+	//			enemyList.erase(enemyList.begin() + i);
+	//			return;
+	//		}
+	//		return;
+	//	}
+	//}
 }

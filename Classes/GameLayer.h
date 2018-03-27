@@ -67,7 +67,7 @@ private:
 	Vec2 enemySpawn3;
 	Vec2 enemySpawn4;
 
-	std::vector<Enemy*> enemyList;
+	std::vector<CEnemy*> enemyList;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
