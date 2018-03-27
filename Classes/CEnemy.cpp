@@ -35,6 +35,7 @@ bool CEnemy::init()
 	this->addChild(weapon, 3);
 
 	speed = 70;
+	movementTimer = 0.f;
 	mood = ENEMYMOVESPAWN;
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(CEnemy::onContactBegin, this);
@@ -78,11 +79,11 @@ void CEnemy::update(float dt)
 {
 	if (mood == ENEMYMOVESPAWN)
 	{
-		exitSpawn();
+		exitSpawn(dt);
 	}
 	else if (mood == ENEMYATTACK)
 	{
-		attackPlayer();
+		attackPlayer(dt);
 	}
 	updateMovement();
 	updateAnimation();
@@ -113,8 +114,10 @@ void CEnemy::updateMovement()
 	{
 		this->getPhysicsBody()->setVelocity(this->getPhysicsBody()->getVelocity() + velocity);
 	}
-
-	accelL = accelR = accelU = accelD = false;
+	if (mood == 1)
+	{
+		accelL = accelR = accelU = accelD = false;
+	}
 }
 
 void CEnemy::updateAnimation()
@@ -140,12 +143,14 @@ void CEnemy::updateAnimation()
 	}
 }
 
-void CEnemy::exitSpawn()
+void CEnemy::exitSpawn(float dt)
 {
 	if (spawnGate.x == 2486)
 	{
-		if(this->getPosition().x > spawnGate.x)
+		if (this->getPosition().x > spawnGate.x)
+		{
 			accelL = true;
+		}
 		else
 		{
 			mood = ENEMYATTACK;
@@ -229,10 +234,49 @@ void CEnemy::exitSpawn()
 	
 }
 
-void CEnemy::attackPlayer()
+void CEnemy::attackPlayer(float dt)
 {
 	//accelL = true;
 	weapons[cWeapNum]->enemyFire(this->getPosition(), player_->getPosition() - this->getPosition());
+	int randomMove = RandomHelper::random_int(1, 9);
+	movementTimer += dt;
+	if (movementTimer >= 1.f)
+	{
+		switch (randomMove) {
+		case 1:
+			accelL = true;
+			break;
+		case 2:
+			accelR = true;
+			break;
+		case 3:
+			accelU = true;
+			break;
+		case 4:
+			accelD = true;
+			break;
+		case 5:
+			accelL = true;
+			accelD = true;
+			break;
+		case 6:
+			accelU = true;
+			accelL = true;
+			break;
+		case 7:
+			accelR = true;
+			accelD = true;
+			break;
+		case 8:
+			accelR = true;
+			accelU = true;
+			break;
+		case 9:
+			accelL = accelR = accelU = accelD = false;
+			break;
+		}
+		movementTimer = 0.f;
+	}
 }
 
 void CEnemy::setPlayer(CPlayer & player)

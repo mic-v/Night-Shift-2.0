@@ -18,8 +18,8 @@ public:
 	void updateMovement();
 	void updateAnimation();
 	//MOOD for the A.I.
-	void exitSpawn();
-	void attackPlayer();
+	void exitSpawn(float);
+	void attackPlayer(float);
 	void setPlayer(CPlayer &);
 private:
 	bool onContactBegin(PhysicsContact & contact);
@@ -31,7 +31,7 @@ private:
 	bool accelU; bool accelD;
 	float speed;
 	
-
+	float movementTimer;
 	//A.I. variables
 	int mood;
 	bool pastSpawnGate;

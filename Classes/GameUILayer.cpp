@@ -76,15 +76,17 @@ bool GameUILayer::init()
 	hpBar->setMidpoint(Vec2(0, 0));
 	border->addChild(hpBar, 10, "hpBar");
 
-	roundStart = Label::createWithTTF("SURVIVE TILL SUNRISE", "fonts/Arial.ttf", 24);
+	roundStart = Label::createWithTTF("SURVIVE TILL 5 AM", "fonts/double_pixel-7.ttf", 64);
 	roundStart->setPosition(Vec2(vorigin.x + vsize.width / 2, vorigin.y + vsize.height - 400));
 	this->addChild(roundStart);
 	roundStart->runAction(Hide::create());
 
 	auto roundStartListener = EventListenerCustom::create("roundStart", [=](EventCustom* event) {
-/*		auto sequence = Sequence::create(Show::create(), DelayTime::create(1.f), Hide::create(), NULL);
+		auto sequence = Sequence::create(Show::create(), DelayTime::create(1.f), Hide::create(), NULL);
 		roundStart->runAction(sequence);
-		hpBar->runAction(ProgressFromTo::create(60.0f, 0.0f, 100.0f));*/ // filling from 30% to 75% in 2 seconds
+	});
+
+	auto timerListener = EventListenerCustom::create("timer", [=](EventCustom* event) {
 		char* text = static_cast<char*>(event->getUserData());
 		std::string tmp(text);
 		time->setString(tmp);
@@ -103,6 +105,7 @@ bool GameUILayer::init()
 	_eventDispatcher->addEventListenerWithFixedPriority(ammoListener, 1);
 	_eventDispatcher->addEventListenerWithFixedPriority(weaponChangeListener, 2);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(roundStartListener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(timerListener, this);
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(GameUILayer::onContactBegin, this);
 	contactListener->onContactPreSolve = CC_CALLBACK_1(GameUILayer::onContactPost, this);

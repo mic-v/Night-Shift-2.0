@@ -103,10 +103,14 @@ void GameLayer::update(float dt)
 		{
 			levelTimer += dt;
 			std::string tmp = "12 AM";
-			EventCustom event("roundStart");
+			EventCustom event("timer");
 			event.setUserData((void*)tmp.c_str());
 
 			_eventDispatcher->dispatchEvent(&event);
+
+			EventCustom event2("roundStart");
+			_eventDispatcher->dispatchEvent(&event2);
+
 			roundStart_ = true;
 		}
 	}
@@ -159,35 +163,35 @@ void GameLayer::update(float dt)
 		if ((int)levelTimer == MAXTIME * 0.2)
 		{
 			std::string tmp = "1 AM";
-			EventCustom event("roundStart");
+			EventCustom event("timer");
 			event.setUserData((void*)tmp.c_str());
 			_eventDispatcher->dispatchEvent(&event);
 		}
 		else if ((int)levelTimer == MAXTIME * 0.4)
 		{
 			std::string tmp = "2 AM";
-			EventCustom event("roundStart");
+			EventCustom event("timer");
 			event.setUserData((void*)tmp.c_str());
 			_eventDispatcher->dispatchEvent(&event);
 		}
 		else  if ((int)levelTimer == MAXTIME * 0.6)
 		{
 			std::string tmp = "3 AM";
-			EventCustom event("roundStart");
+			EventCustom event("timer");
 			event.setUserData((void*)tmp.c_str());
 			_eventDispatcher->dispatchEvent(&event);
 		}
 		else if ((int)levelTimer == MAXTIME * 0.8)
 		{
 			std::string tmp = "4 AM";
-			EventCustom event("roundStart");
+			EventCustom event("timer");
 			event.setUserData((void*)tmp.c_str());
 			_eventDispatcher->dispatchEvent(&event);
 		}
 		else if ((int)levelTimer == MAXTIME)
 		{
 			std::string tmp = "5 AM";
-			EventCustom event("roundStart");
+			EventCustom event("timer");
 			event.setUserData((void*)tmp.c_str());
 			_eventDispatcher->dispatchEvent(&event);
 			roundEnd_ = true;
