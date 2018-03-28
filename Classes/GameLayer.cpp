@@ -100,7 +100,7 @@ void GameLayer::update(float dt)
 	//std::cout << cplayer->getZOrder() << std::endl;
 	if (!roundStart_)
 	{
-		if (cplayer->getPosition().y > 800)
+		if (cplayer->getPosition().y > 860)
 		{
 			levelTimer += dt;
 			std::string tmp = "12 AM";
@@ -120,7 +120,12 @@ void GameLayer::update(float dt)
 				this->addChild(door);
 				doorList.push_back(door);
 			}
-			
+			auto wallBody = PhysicsBody::createBox(Size(256, 64), PhysicsMaterial(1.0f, 1.0f, 0.0f), Vec2(-32, -96));
+			wallBody->setDynamic(false);
+			wallBody->setContactTestBitmask(0xFFFFFFFF);
+			wallBody->setTag(WALL_TAG);
+			wallBody->setGroup(-3);
+			doorList[2]->setPhysicsBody(wallBody);
 			roundStart_ = true;
 		}
 	}
@@ -233,6 +238,19 @@ bool GameLayer::onContactBegin(PhysicsContact & contact)
 			findEnemyandHurt(nodeB);
 			return true;
 		}
+
+		if (nodeA->getPhysicsBody()->getTag() == PLAYER_TAG && nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG)
+		{
+			//findEnemyandHurt(nodeA);
+			return true;
+		}
+		else if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
+		{
+			//findEnemyandHurt(nodeB);
+			return true;
+		}
+
+
 	}
 	return false;
 }

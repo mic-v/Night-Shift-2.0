@@ -28,6 +28,8 @@ public:
 	bool onContactPost(PhysicsContact &);
 	bool onContactSeparate(PhysicsContact &);
 
+	void damage();
+
 
 private:
 	float hspeed;

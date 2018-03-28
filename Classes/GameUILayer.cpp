@@ -41,7 +41,9 @@ bool GameUILayer::init()
 	}
 	label->setVisible(false);
 
-	time = Label::createWithTTF("0:00", "fonts/double_pixel-7.ttf", 64);
+	time = Label::createWithTTF("0:00", "fonts/double_pixel-7.ttf", 43);
+	time->setPosition(phone->getContentSize().width / 2 + 5, phone->getContentSize().height / 2);
+	time->setColor(Color3B(255.f, 139.f, 94.f));
 	phone->addChild(time);
 
 	currentWeapon = Label::createWithTTF("Barehands", "fonts/double_pixel-7.ttf", 64);
@@ -66,6 +68,7 @@ bool GameUILayer::init()
 	hpBar->setBarChangeRate(Vec2(1, 0));
 	hpBar->setMidpoint(Vec2(0, 0));
 	border->addChild(hpBar, 10, "hpBar");
+	hpBar->setPercentage(100);
 
 	roundStart = Label::createWithTTF("SURVIVE TILL 5 AM", "fonts/double_pixel-7.ttf", 64);
 	roundStart->setPosition(Vec2(vorigin.x + vsize.width / 2, vorigin.y + vsize.height - 400));
@@ -80,12 +83,15 @@ bool GameUILayer::init()
 	auto roundStartListener = EventListenerCustom::create("roundStart", [=](EventCustom* event) {
 		auto sequence = Sequence::create(Show::create(), DelayTime::create(1.f), Hide::create(), NULL);
 		roundStart->runAction(sequence);
+		//hpBar->runAction(ProgressFromTo::create(1.f, 0.0f, 100.0f));
+		
 	});
 
 	auto finishEnemyListener = EventListenerCustom::create("finishEnemy", [=](EventCustom* event) {
 		roundEnd->setString("KILL ANY REMAINING ENEMIES");
 		roundEnd->runAction(Show::create());
 	});
+	
 
 	auto roundEndListener = EventListenerCustom::create("roundEnd", [=](EventCustom* event) {
 		std::string tmp("RETURN TO YOUR OFFICE");
@@ -109,11 +115,19 @@ bool GameUILayer::init()
 		std::string tmp(text);
 		currentWeapon->setString(tmp);
 	});
+
+	auto healthBarListener = EventListenerCustom::create("health", [=](EventCustom* event) {
+		float* health = static_cast<float*>(event->getUserData());
+		float percent = (*health / MAX_PLAYER_HEALTH) * 100;
+		std::cout << percent << std::endl;
+		hpBar->runAction(ProgressFromTo::create(1.f, hpBar->getPercentage(), percent));
+	});
 	_eventDispatcher->addEventListenerWithFixedPriority(ammoListener, 1);
 	_eventDispatcher->addEventListenerWithFixedPriority(weaponChangeListener, 2);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(roundStartListener, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(roundEndListener, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(timerListener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(healthBarListener, this);
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(GameUILayer::onContactBegin, this);
 	contactListener->onContactPreSolve = CC_CALLBACK_1(GameUILayer::onContactPost, this);

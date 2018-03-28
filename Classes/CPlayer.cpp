@@ -10,6 +10,7 @@ CPlayer::CPlayer()
 	cWeapNum = 0;
 	isMoving = false;
 	isSprinting = false;
+	health = MAX_PLAYER_HEALTH;
 	//hspeed = 100.f;
 	//vspeed = 100.f;
 }
@@ -318,6 +319,11 @@ void CPlayer::update(float dt)
 	auto p = this->getPosition() - Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f);
 	p = CC_POINT_POINTS_TO_PIXELS(p);
 	this->setLocalZOrder(-((p.y + 64) / 64));
+
+	if (INPUTS->getKey(KeyCode::KEY_G))
+	{
+		this->damage();
+	}
 }
 bool CPlayer::onContactBegin(PhysicsContact & contact)
 {
@@ -372,4 +378,13 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 bool CPlayer::onContactSeparate(PhysicsContact & contact)
 {
 	return true;
+}
+
+void CPlayer::damage()
+{
+	this->health--;
+	float* tmp = &(this->health);
+	EventCustom event("health");
+	event.setUserData((void*)&(this->health));
+	_eventDispatcher->dispatchEvent(&event);
 }
