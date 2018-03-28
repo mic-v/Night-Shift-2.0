@@ -56,6 +56,7 @@ bool Weapon::init(const std::string & fileName)
 		ammo = 7;
 		maxCartridgeAmmo = 7;
 		totalAmmo = 0;
+		isPistol_ = true;
 		this->setTag(PISTOLPICKUPTAG);
 		this->setName(PISTOLNAME);
 		initPistolAnimations();
@@ -65,7 +66,7 @@ bool Weapon::init(const std::string & fileName)
 		ammo = 30;
 		maxCartridgeAmmo = 30;
 		totalAmmo = 0;
-		isPistol_ = true;
+		isPistol_ = false;
 		this->setTag(AKPICKUPTAG);
 		this->setName(AKNAME);
 		initAKAnimation();
@@ -255,31 +256,28 @@ void Weapon::update(float dt)
 				Vec2 direction = CAMERA->getScreenMouse() - (CAMERA->getOrigin() + Vec2(DISPLAY->getWindowSizeAsVec2().x * 0.5f, DISPLAY->getWindowSizeAsVec2().y * 0.5f));
 				position_ = (CAMERA->getOrigin() + Vec2(DISPLAY->getWindowSizeAsVec2().x * 0.5f, DISPLAY->getWindowSizeAsVec2().y * 0.5f)) + position_.getNormalized() + direction.getNormalized() * 100.f;
 				Projectile* projectile;
-				if (isPistol_)
+				if (!isPistol_)
 				{
-					//projectile = Projectile::create("0305Bullet.png");
-					//if (player)
-					//	projectile->getPhysicsBody()->setTag(4);
-					//projectile->setPosition(position_);
-					//std::cout << position_.x << std::endl;
-					//this->getParent()->getParent()->addChild(projectile);
-					projectile = Projectile::create("0305Bullet.png");
-					projectile->getPhysicsBody()->setCategoryBitmask(PLAYERBULLET_CATEGORY);
-					projectile->getPhysicsBody()->setCollisionBitmask(MASK_PLAYERBULLET);
-					projectile->getPhysicsBody()->setContactTestBitmask(MASK_PLAYERBULLET);
-					projectile->getPhysicsBody()->setTag(BULLET_TAG);
-					if (isPistol_)
-						projectile->setTexture("0305Bullet.png");
-
-					float rot_ = Vec2::angle(Vec2(0, 1), direction.getNormalized()) * (180.f / M_PI) - 90.f;
-
-
-					projectile->setRotation(rot_);
-					projectile->setShot(position_, direction);
-					
-					//Get Parent(Player), get its parent(Layer), then add the projectile to layercccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-					this->getParent()->getParent()->addChild(projectile);
+					projectile = Projectile::create("45CalBullet.png");
 				}
+				else
+				{
+					projectile = Projectile::create("0305Bullet.png");
+				}
+				projectile->getPhysicsBody()->setCategoryBitmask(PLAYERBULLET_CATEGORY);
+				projectile->getPhysicsBody()->setCollisionBitmask(MASK_PLAYERBULLET);
+				projectile->getPhysicsBody()->setContactTestBitmask(MASK_PLAYERBULLET);
+				projectile->getPhysicsBody()->setTag(BULLET_TAG);
+
+
+				float rot_ = Vec2::angle(Vec2(0, 1), direction.getNormalized()) * (180.f / M_PI) - 90.f;
+
+
+				projectile->setRotation(rot_);
+				projectile->setShot(position_, direction);
+
+				//Get Parent(Player), get its parent(Layer), then add the projectile to layercccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+				this->getParent()->getParent()->addChild(projectile);
 				fired = true;
 				ammo--;
 				EventCustom event2("ammo");
@@ -427,12 +425,13 @@ void Weapon::displayEquip()
 	_eventDispatcher->dispatchEvent(&event);
 
 	EventCustom event2("ammo");
-	if (isPistol_)
+	//if (isPistol_)
 	{
 		string tmp = to_string(ammo) + " / Infinite";
 		event2.setUserData((void*)tmp.c_str());
 		_eventDispatcher->dispatchEvent(&event2);
 	}
+
 }
 
 bool Weapon::onContactBegin(PhysicsContact &)
