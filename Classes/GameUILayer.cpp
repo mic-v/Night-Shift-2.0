@@ -19,15 +19,6 @@ bool GameUILayer::init()
 	auto vsize = director->getVisibleSize();
 	auto vorigin = director->getVisibleOrigin();
 
-	//auto textfield = Widget
-	//auto textField = ui::TextField::create("TESTING BOY", "Arial", 100);
-	//textField->setPosition(Vec2(vsize.width * 0.5f, vsize.height * 0.5f));
-
-	//textField->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-	//	std::cout << "editing a TextField" << std::endl;
-	//});
-
-	//this->addChild(textField);
 
 	Sprite* phone = Sprite::create("UI/phone.png");
 	phone->setPosition(Vec2(vorigin.x + vsize.width - 200, vsize.height - 200));
@@ -81,9 +72,25 @@ bool GameUILayer::init()
 	this->addChild(roundStart);
 	roundStart->runAction(Hide::create());
 
+	roundEnd = Label::createWithTTF("RETURN TO YOUR OFFICE", "fonts/double_pixel-7.ttf", 64);
+	roundEnd->setPosition(Vec2(vorigin.x + vsize.width / 2, vorigin.y + vsize.height - 400));
+	this->addChild(roundEnd);
+	roundEnd->runAction(Hide::create());
+
 	auto roundStartListener = EventListenerCustom::create("roundStart", [=](EventCustom* event) {
 		auto sequence = Sequence::create(Show::create(), DelayTime::create(1.f), Hide::create(), NULL);
 		roundStart->runAction(sequence);
+	});
+
+	auto finishEnemyListener = EventListenerCustom::create("finishEnemy", [=](EventCustom* event) {
+		roundEnd->setString("KILL ANY REMAINING ENEMIES");
+		roundEnd->runAction(Show::create());
+	});
+
+	auto roundEndListener = EventListenerCustom::create("roundEnd", [=](EventCustom* event) {
+		std::string tmp("RETURN TO YOUR OFFICE");
+		roundEnd->setString(tmp);
+		roundEnd->runAction(Show::create());
 	});
 
 	auto timerListener = EventListenerCustom::create("timer", [=](EventCustom* event) {
@@ -105,6 +112,7 @@ bool GameUILayer::init()
 	_eventDispatcher->addEventListenerWithFixedPriority(ammoListener, 1);
 	_eventDispatcher->addEventListenerWithFixedPriority(weaponChangeListener, 2);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(roundStartListener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(roundEndListener, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(timerListener, this);
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(GameUILayer::onContactBegin, this);

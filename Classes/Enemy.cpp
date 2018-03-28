@@ -1,4 +1,4 @@
-#include "Enemy.h"
+	#include "Enemy.h"
 #include "Definitions.h"
 
 /*
@@ -324,7 +324,6 @@ bool Enemy::onContactBegin(PhysicsContact & contact)
 	{
 		if ((nodeA->getPhysicsBody()->getTag() == WALL_TAG && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG) || (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG))
 		{
-			std::cout << "YES BUT" << nodeA->getPhysicsBody()->getTag() << " " << nodeB->getPhysicsBody()->getTag() << std::endl;
 		}
 	}
 	return true;

@@ -25,7 +25,7 @@ private:
 	Label* time;
 	Label* ammo;
 	Label* currentWeapon;
-	Label* roundStart;
+	Label* roundStart; Label* roundEnd;
 	Sprite* border;
 	Sprite* bar;
 	ProgressTimer* hpBar;

@@ -8,6 +8,8 @@ bool CEnemy::init()
 	}
 	this->setTexture("e-idleR.png");
 
+	initAnimations();
+
 	PhysicsBody* body = PhysicsBody::createBox(this->getContentSize(), PhysicsMaterial(1.f, 1.f, 1.f));
 	body->setDynamic(true);
 	body->setRotationEnable(false);
@@ -22,7 +24,10 @@ bool CEnemy::init()
 
 	accelL = accelR = accelU = accelD = false;
 	pastSpawnGate = false;
+	dyingAnim = false;
+	health = 4.0f;
 
+	//SETUP WEAPON
 	Weapon* weapon = Weapon::create("silencedGun.png");
 	weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f + 10.f));
 	weapon->setAnchorPoint(Vec2(-0.57f, 0.5f));
@@ -47,6 +52,25 @@ bool CEnemy::init()
 	this->scheduleUpdate();
 
 	return true;
+}
+
+void CEnemy::initAnimations()
+{
+	auto spritecache2 = SpriteFrameCache::getInstance();
+	spritecache2->addSpriteFramesWithFile("res/HDR/enemy-dying.plist");
+	//this->stopAction(idleR);
+	//this->getActionByTag()
+	Vector<SpriteFrame*> die;
+	for (int i = 0; i < 7; i++)
+	{
+		stringstream ss;
+		ss << "frame" << i + 1 << ".png";
+		die.pushBack(spritecache2->getSpriteFrameByName(ss.str()));
+	}
+	auto animation = Animation::createWithSpriteFrames(die, 0.09f);
+	dying = Animate::create(animation);
+	dying->setTag(59);
+	dying->retain();
 }
 
 void CEnemy::setSpawn(Vec2 & position_)
@@ -145,7 +169,7 @@ void CEnemy::updateAnimation()
 
 void CEnemy::exitSpawn(float dt)
 {
-	if (spawnGate.x == 2486)
+	if (spawnGate.x == 2496)
 	{
 		if (this->getPosition().x > spawnGate.x)
 		{
@@ -170,7 +194,6 @@ void CEnemy::exitSpawn(float dt)
 	}
 	else if (spawnGate.x == 896)
 	{
-		std::cout << this->getPosition().x << std::endl;
 		if (this->getPosition().x < spawnGate.x)
 		{
 			accelR = true;
@@ -282,6 +305,32 @@ void CEnemy::attackPlayer(float dt)
 void CEnemy::setPlayer(CPlayer & player)
 {
 	player_ = &(player);
+}
+
+void CEnemy::damageEnemy()
+{
+	this->health--;
+}
+
+void CEnemy::removeEnemy()
+{
+	//Stop enemy's state 
+	mood = 5;
+
+	this->getPhysicsBody()->setVelocity(Vec2(0, 0));
+	this->getPhysicsBody()->setVelocityLimit(0);
+	this->getPhysicsBody()->removeFromWorld();
+	if (!dyingAnim)
+	{
+		dyingAnim = true;
+		this->stopAllActions();
+		dyingSeq = Sequence::create(dying, RemoveSelf::create(), nullptr);
+		this->runAction(dyingSeq);
+	}
+	else
+	{
+
+	}
 }
 
 bool CEnemy::onContactBegin(PhysicsContact & contact)

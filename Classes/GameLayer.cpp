@@ -54,7 +54,7 @@ bool GameLayer::init()
 
 	cplayer = CPlayer::create("original.png");
 	cplayer->retain();
-	cplayer->setPosition(1700, 1700);
+	cplayer->setPosition(640, 640);
 	this->addChild(cplayer, 0, PLAYERNAME);
 
 	//enmy = CEnemy::create();
@@ -63,7 +63,8 @@ bool GameLayer::init()
 	//enmy->setSpawn(enemySpawn3);
 	//this->addChild(enmy);
 
-	Item* item = Item::create("silencedGun.png");
+	Item* item = Item::create("AK47.png");
+	item->setName("AK47.png");
 	item->setPosition(Vec2(750, 640));
 	this->addChild(item, 2);
 
@@ -111,6 +112,15 @@ void GameLayer::update(float dt)
 			EventCustom event2("roundStart");
 			_eventDispatcher->dispatchEvent(&event2);
 
+			for (int i = 0; i < 4; i++)
+			{
+				Sprite* door = Sprite::create("Tiles/Wall1.png");
+				door->setPosition(64 * i + 64 * 13, 12 * 64);
+				door->setAnchorPoint(Vec2(0, 0));
+				this->addChild(door);
+				doorList.push_back(door);
+			}
+			
 			roundStart_ = true;
 		}
 	}
@@ -195,7 +205,13 @@ void GameLayer::update(float dt)
 			event.setUserData((void*)tmp.c_str());
 			_eventDispatcher->dispatchEvent(&event);
 			roundEnd_ = true;
+			//roundStart_ = false;
 		}
+	}
+	else if (roundEnd_)
+	{
+		EventCustom event("roundEnd");
+		_eventDispatcher->dispatchEvent(&event);
 	}
 
 }
@@ -358,18 +374,18 @@ void GameLayer::initLevel()
 
 void GameLayer::findEnemyandHurt(Node* node)
 {
-	//for (int i = 0; i < enemyList.size(); i++)
-	//{
-	//	if (enemyList[i] == node)
-	//	{
-	//		enemyList[i]->damageEnemy();
-	//		if (enemyList[i]->getHealth() == 0)
-	//		{
-	//			enemyList[i]->removeEnemy();
-	//			enemyList.erase(enemyList.begin() + i);
-	//			return;
-	//		}
-	//		return;
-	//	}
-	//}
+	for (int i = 0; i < enemyList.size(); i++)
+	{
+		if (enemyList[i] == node)
+		{
+			enemyList[i]->damageEnemy();
+			if (enemyList[i]->getHealth() <= 0)
+			{
+				enemyList[i]->removeEnemy();
+				enemyList.erase(enemyList.begin() + i);
+				return;
+			}
+			return;
+		}
+	}
 }

@@ -56,10 +56,19 @@ bool Weapon::init(const std::string & fileName)
 		ammo = 7;
 		maxCartridgeAmmo = 7;
 		totalAmmo = 0;
-		isPistol_ = true;
 		this->setTag(PISTOLPICKUPTAG);
 		this->setName(PISTOLNAME);
 		initPistolAnimations();
+	}
+	if (fileName == "AK47.png")
+	{
+		ammo = 30;
+		maxCartridgeAmmo = 30;
+		totalAmmo = 0;
+		isPistol_ = true;
+		this->setTag(AKPICKUPTAG);
+		this->setName(AKNAME);
+		initAKAnimation();
 	}
 
 	this->scheduleUpdate();
@@ -113,6 +122,48 @@ void Weapon::initPistolAnimations()
 	spritecache->destroyInstance();
 	
 
+}
+
+void Weapon::initAKAnimation()
+{
+	std::cout << "initialize" << std::endl;
+	FileUtils::getInstance()->addSearchResolutionsOrder("HDR");
+	auto spritecache = SpriteFrameCache::getInstance();
+	spritecache->addSpriteFramesWithFile("res/HDR/AK47_firing_right.plist");
+
+	Vector<SpriteFrame*> fireframes;
+	for (int i = 0; i < 4; i++)
+	{
+		stringstream ss;
+		ss << "frame-r-00" << i + 1 << ".png";
+		fireframes.pushBack(spritecache->getSpriteFrameByName(ss.str()));
+	}
+	auto animation = Animation::createWithSpriteFrames(fireframes, 0.03f);
+	animFire = Animate::create(animation);
+	animFire->retain();
+	animFire->setTag(FIRETAG);
+
+	stringstream ss;
+	ss << "AK47.png";
+	idleFrame = spritecache->getSpriteFrameByName("frame-r-001.png");
+	idleFrame->retain();
+	spritecache->destroyInstance();
+
+	spritecache = SpriteFrameCache::getInstance();
+	spritecache->addSpriteFramesWithFile("res/HDR/AK47_firing.plist");
+
+	Vector<SpriteFrame*> reloadR;
+	for (int i = 0; i < 27; i++)
+	{
+		stringstream ss1;
+		ss1 << "frame-r-" << setfill('0') << setw(3) << i + 1 << ".png";
+		reloadR.pushBack(spritecache->getSpriteFrameByName(ss1.str()));
+	}
+	animation = Animation::createWithSpriteFrames(reloadR, 0.09f);
+	reload = Animate::create(animation);
+	reload->setTag(RELOADINGTAG);
+	reload->retain();
+	spritecache->destroyInstance();
 }
 
 
@@ -225,7 +276,8 @@ void Weapon::update(float dt)
 
 					projectile->setRotation(rot_);
 					projectile->setShot(position_, direction);
-					//projectile->setPosition(position_);
+					
+					//Get Parent(Player), get its parent(Layer), then add the projectile to layercccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 					this->getParent()->getParent()->addChild(projectile);
 				}
 				fired = true;

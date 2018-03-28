@@ -164,6 +164,7 @@ void CPlayer::handleInput()
 void CPlayer::handleMovement(float dt)
 {
 	isSprinting = false;
+	isMoving = false;
 	if (INPUTS->getKey(KeyCode::KEY_A) || INPUTS->getKey(KeyCode::KEY_D) || INPUTS->getKey(KeyCode::KEY_W) || INPUTS->getKey(KeyCode::KEY_S))
 	{
 		isMoving = true;
@@ -179,10 +180,6 @@ void CPlayer::handleMovement(float dt)
 		{
 			isSprinting = true;
 		}
-	}
-	else
-	{
-		isMoving = false;
 	}
 
 	if (isSprinting)
@@ -307,9 +304,9 @@ void CPlayer::updateAnimation(float dt)
 		if (cOrientation_ != orientation_)
 		{
 			cOrientation_ = orientation_;
-			string tmp = "CharacterAnimations/Player/idle" + orientation_ + ".png";
-			this->setTexture(tmp);
 		}
+		string tmp = "CharacterAnimations/Player/idle" + cOrientation_ + ".png";
+		this->setTexture(tmp);
 	}
 }
 
@@ -340,6 +337,10 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 				Weapon* weapon = Weapon::create(nodeA->getName());
 				weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f - 10.f));
 				weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
+				if (nodeA->getName() == "AK47.png")
+				{
+					weapon->setAnchorPoint(Vec2(0.25f, 0.5f));
+				}
 				this->addChild(weapon);
 				weapon->displayEquip();
 				weapons.push_back(weapon);
@@ -351,6 +352,10 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 				Weapon* weapon = Weapon::create(nodeB->getName());
 				weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f - 10.f));
 				weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
+				if (nodeB->getName() == "AK47.png")
+				{
+					weapon->setAnchorPoint(Vec2(0.25f, 0.5f));
+				}
 				weapon->setIfPlayer(true);
 				this->addChild(weapon);
 				weapon->displayEquip();

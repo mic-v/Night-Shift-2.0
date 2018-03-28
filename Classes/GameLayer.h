@@ -67,6 +67,8 @@ private:
 	Vec2 enemySpawn3;
 	Vec2 enemySpawn4;
 
+	std::vector<Sprite*> doorList;
+
 	std::vector<CEnemy*> enemyList;
 };
 

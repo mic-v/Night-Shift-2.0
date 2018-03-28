@@ -11,6 +11,7 @@ class CEnemy : public Character
 {
 public:
 	virtual bool init();
+	void initAnimations();
 	CREATE_FUNC(CEnemy);
 
 	void setSpawn(Vec2 &);
@@ -21,6 +22,9 @@ public:
 	void exitSpawn(float);
 	void attackPlayer(float);
 	void setPlayer(CPlayer &);
+
+	void damageEnemy();
+	void removeEnemy();
 private:
 	bool onContactBegin(PhysicsContact & contact);
 	bool onContactPost(PhysicsContact & contact);
@@ -38,6 +42,8 @@ private:
 	CPlayer* player_;
 	Vec2 spawnPosition;
 	Vec2 spawnGate;
+	bool dyingAnim;
+	Sequence* dyingSeq;
 
 };
 

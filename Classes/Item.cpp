@@ -30,7 +30,7 @@ bool Item::init(const std::string & fileName)
 	}
 
 	spriteFile = fileName;
-	this->setName("handOnGun.png");
+	//this->setName("handOnGun.png");
 	PhysicsBody* body = PhysicsBody::createBox(this->getContentSize());
 	//body->setDynamic(true);
 	body->setVelocityLimit(0);
