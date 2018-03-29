@@ -81,6 +81,9 @@
     <ClCompile Include="..\Classes\CEnemy.cpp">
       <Filter>src\Objects\Character</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\GameOverScene.cpp">
+      <Filter>src\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -142,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\CEnemy.h">
       <Filter>src\Objects\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameOverScene.h">
+      <Filter>src\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

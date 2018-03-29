@@ -215,8 +215,17 @@ void GameLayer::update(float dt)
 	}
 	else if (roundEnd_)
 	{
-		EventCustom event("roundEnd");
-		_eventDispatcher->dispatchEvent(&event);
+		if (enemyList.size() <= 0)
+		{
+			EventCustom event("roundEnd");
+			_eventDispatcher->dispatchEvent(&event);
+		}
+		else
+		{
+			EventCustom event("finishEnemy");
+			_eventDispatcher->dispatchEvent(&event);
+		}
+
 	}
 
 }

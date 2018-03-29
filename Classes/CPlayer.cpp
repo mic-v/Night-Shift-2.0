@@ -11,8 +11,6 @@ CPlayer::CPlayer()
 	isMoving = false;
 	isSprinting = false;
 	health = MAX_PLAYER_HEALTH;
-	//hspeed = 100.f;
-	//vspeed = 100.f;
 }
 
 CPlayer::~CPlayer()
@@ -133,9 +131,6 @@ void CPlayer::initAnimations()
 	animation = Animation::createWithSpriteFrames(idleright, 0.09f);
 	idleR = Animate::create(animation);
 	idleR->retain();
-	//spr->runAction(RepeatForever::create(idleR));
-
-
 
 	Vector<SpriteFrame*> idleleft;
 	for (int i = 0; i < 1; i++)
@@ -147,14 +142,27 @@ void CPlayer::initAnimations()
 	stringstream ss2;
 	ss2 << "frame-r-006.png";
 	idleFrameL = spritecache->getSpriteFrameByName(ss2.str());
-	//idleFrameL = spritecache->getSpriteFrameByName("idleLeft.png");
 	idleFrameL->retain();
 	animation = Animation::createWithSpriteFrames(idleleft, 0.09f);
 	idleL = Animate::create(animation);
 	idleL->retain();
-	//this->runAction(RepeatForever::create(runAnimL));
 
 	spritecache->destroyInstance();
+	spritecache = SpriteFrameCache::getInstance();
+	spritecache->addSpriteFramesWithFile("res/HDR/player-dying.plist");
+	//this->stopAction(idleR);
+	//this->getActionByTag()
+	Vector<SpriteFrame*> die;
+	for (int i = 0; i < 7; i++)
+	{
+		stringstream ss;
+		ss << "frame" << i + 1 << ".png";
+		die.pushBack(spritecache->getSpriteFrameByName(ss.str()));
+	}
+	animation = Animation::createWithSpriteFrames(die, 0.09f);
+	dying = Animate::create(animation);
+	dying->setTag(59);
+	dying->retain();
 
 }
 
@@ -213,11 +221,11 @@ void CPlayer::handleMovement(float dt)
 		velNorm += Vec2(0, -1);
 	}
 	//}
-	Vec2 velocity4 = velocity;
+	Vec2 nextVelocity = velocity;
 	//this->getPhysicsBody()->applyForce(velocity4);
 	if (isMoving)
 	{
-		this->getPhysicsBody()->setVelocity(this->getPhysicsBody()->getVelocity() + velocity4);
+		this->getPhysicsBody()->setVelocity(this->getPhysicsBody()->getVelocity() + nextVelocity);
 	}
 	else
 	{
@@ -387,4 +395,12 @@ void CPlayer::damage()
 	EventCustom event("health");
 	event.setUserData((void*)&(this->health));
 	_eventDispatcher->dispatchEvent(&event);
+	if (this->health == 0)
+	{
+		this->stopAllActions();
+		this->runAction(dying);
+		this->unscheduleUpdate();
+		EventCustom event("gameOver");
+		_eventDispatcher->dispatchEvent(&event);
+	}
 }

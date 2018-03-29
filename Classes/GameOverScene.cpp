@@ -1,14 +1,14 @@
-#include "MainMenu.h"
+#include "GameOverScene.h"
 #include "GameCamera.h"
 using namespace cocos2d;
 
-cocos2d::Scene* MainMenu::createScene()
+cocos2d::Scene* GameOverScene::createScene()
 {
 	//Create a scene without physics (we're implementing our own!)
 	Scene* scene = Scene::create();
 
 	//Create the main layer that is attached to the scene
-	auto layer = MainMenu::create();
+	auto layer = GameOverScene::create();
 
 	//Add the layer to the scene
 	scene->addChild(layer);
@@ -25,7 +25,7 @@ static void problemLoading(const char* filename)
 	printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in GameScene.cpp\n");
 }
 
-bool MainMenu::init()
+bool GameOverScene::init()
 {
 	if (!Layer::init())
 	{
@@ -34,14 +34,14 @@ bool MainMenu::init()
 	Size screenSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	Sprite *title = Sprite::create("MainMenuTitle-Alt.png");
+	Sprite *title = Sprite::create("splashScreen.png");
 	title->setPosition(Vec2(screenSize.width / 2 + origin.x, screenSize.height * 0.75 + origin.y));
 	this->addChild(title);
 
 	auto closeItem = MenuItemImage::create(
 		"exit.png",
 		"exit_selected.png",
-		CC_CALLBACK_1(MainMenu::menuCloseCallback, this));
+		CC_CALLBACK_1(GameOverScene::menuCloseCallback, this));
 
 	if (closeItem == nullptr ||
 		closeItem->getContentSize().width <= 0 ||
@@ -56,10 +56,28 @@ bool MainMenu::init()
 		closeItem->setPosition(Vec2(x, y));
 	}
 
+	auto menuItem = MenuItemImage::create(
+		"resumeButton.png",
+		"resumeButton_selected.png",
+		CC_CALLBACK_1(GameOverScene::menuMenuCallback, this));
+
+	if (menuItem == nullptr ||
+		menuItem->getContentSize().width <= 0 ||
+		menuItem->getContentSize().height <= 0)
+	{
+		problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
+	}
+	else
+	{
+		float x = screenSize.width / 2 + origin.x;
+		float y = screenSize.height * 0.5 + origin.y;
+		menuItem->setPosition(Vec2(x, y));
+	}
+
 	auto gameItem = MenuItemImage::create(
 		"startButton.png",
 		"startButton_selected.png",
-		CC_CALLBACK_1(MainMenu::menuGameCallback, this));
+		CC_CALLBACK_1(GameOverScene::menuGameCallback, this));
 
 	if (gameItem == nullptr ||
 		gameItem->getContentSize().width <= 0 ||
@@ -70,10 +88,10 @@ bool MainMenu::init()
 	else
 	{
 		float x = screenSize.width / 2 + origin.x;
-		float y = screenSize.height * 0.5 + origin.y;
+		float y = screenSize.height * 0.6 + origin.y;
 		gameItem->setPosition(Vec2(x, y));
 	}
-	auto menu = Menu::create(gameItem, closeItem, NULL);
+	auto menu = Menu::create(gameItem, menuItem, closeItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
 
@@ -81,7 +99,7 @@ bool MainMenu::init()
 	return true;
 }
 
-void MainMenu::menuCloseCallback(cocos2d::Ref * pSender)
+void GameOverScene::menuCloseCallback(cocos2d::Ref * pSender)
 {
 	//Close the cocos2d-x game scene and quit the application
 	Director::getInstance()->end();
@@ -94,14 +112,19 @@ void MainMenu::menuCloseCallback(cocos2d::Ref * pSender)
 
 	//EventCustom customEndEvent("game_scene_close_event");
 	//_eventDispatcher->dispatchEvent(&customEndEvent);
-
-
 }
 
-void MainMenu::menuGameCallback(cocos2d::Ref * pSender)
+void GameOverScene::menuGameCallback(cocos2d::Ref * pSender)
 {
 	Scene *scene = GameScene::createScene();
-	Director::getInstance()->replaceScene(scene);
-	CAMERA->init();
+	TransitionFade *transition = TransitionFade::create(4.f, scene);
+	Director::getInstance()->replaceScene(transition);
+}
+
+void GameOverScene::menuMenuCallback(cocos2d::Ref * pSender)
+{
+	Scene *scene = MainMenu::createScene();
+	TransitionFade *transition = TransitionFade::create(4.f, scene);
+	Director::getInstance()->replaceScene(transition);
 }
 

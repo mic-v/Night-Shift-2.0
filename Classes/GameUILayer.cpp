@@ -128,6 +128,7 @@ bool GameUILayer::init()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(roundEndListener, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(timerListener, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(healthBarListener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(finishEnemyListener, this);
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(GameUILayer::onContactBegin, this);
 	contactListener->onContactPreSolve = CC_CALLBACK_1(GameUILayer::onContactPost, this);
