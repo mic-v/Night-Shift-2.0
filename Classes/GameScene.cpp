@@ -19,7 +19,7 @@ Scene* GameScene::createScene()
 	scene->addChild(layer);
 	PhysicsWorld* phys = scene->getPhysicsWorld();
 	phys->setGravity(Vec2(0, 0));
-	phys->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	//phys->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
 	return scene;
 

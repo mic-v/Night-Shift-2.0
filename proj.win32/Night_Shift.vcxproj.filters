@@ -60,9 +60,6 @@
     <ClCompile Include="..\Classes\CPlayer.cpp">
       <Filter>src\Objects\Character</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Enemy.cpp">
-      <Filter>src\Objects\Character</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Item.cpp">
       <Filter>src\Objects\Items</Filter>
     </ClCompile>
@@ -120,9 +117,6 @@
       <Filter>src\Objects\Character</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\CPlayer.h">
-      <Filter>src\Objects\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Enemy.h">
       <Filter>src\Objects\Character</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Weapon.h">

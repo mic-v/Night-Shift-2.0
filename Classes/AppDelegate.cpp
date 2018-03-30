@@ -107,7 +107,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	//director->setProjection(Director::Projection::_2D);
 	//director->setDepthTest(true);
 	director->setDisplayStats(true);
-	DISPLAY->init(1920.0f, 1080.0f, "Night Shift", false);
+	DISPLAY->init(1920.0f, 1080.0f, "Night Shift", true);
 	//auto scene = GameScene::createScene();
 	auto scene = SplashScene::createScene();
 	director->runWithScene(scene);

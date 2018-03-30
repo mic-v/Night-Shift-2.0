@@ -185,7 +185,7 @@ void CPlayer::handleMovement(float dt)
 		{
 			isMoving = false;
 		}
-		if (INPUTS->getKey(KeyCode::KEY_SHIFT))
+		if (INPUTS->getKeyPress(KeyCode::KEY_SHIFT))
 		{
 			isSprinting = true;
 		}
@@ -193,11 +193,16 @@ void CPlayer::handleMovement(float dt)
 
 	if (isSprinting)
 	{
-		this->getPhysicsBody()->setVelocityLimit(200);
+		this->getPhysicsBody()->setVelocityLimit(1200);
+		hspeed = 1200;
+		vspeed = 1200;
+		std::cout << "SPRINT SPRINT SPRINT" << std::endl;
 	}
 	else
 	{
 		this->getPhysicsBody()->setVelocityLimit(130);
+		hspeed = 70;
+		vspeed = 70;
 	}
 	velocity = Vec2(0, 0);
 	if (INPUTS->getKey(KeyCode::KEY_A))
@@ -328,10 +333,6 @@ void CPlayer::update(float dt)
 	p = CC_POINT_POINTS_TO_PIXELS(p);
 	this->setLocalZOrder(-((p.y + 64) / 64));
 
-	if (INPUTS->getKey(KeyCode::KEY_G))
-	{
-		this->damage();
-	}
 }
 bool CPlayer::onContactBegin(PhysicsContact & contact)
 {

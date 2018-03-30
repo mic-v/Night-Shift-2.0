@@ -237,6 +237,7 @@ bool GameLayer::onContactBegin(PhysicsContact & contact)
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
 	if (nodeA && nodeB)
 	{
+		std::cout << nodeA->getPhysicsBody()->getTag() << " " << nodeB->getPhysicsBody()->getTag() << std::endl;
 		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == BULLET_TAG)
 		{
 			findEnemyandHurt(nodeA);
@@ -250,18 +251,16 @@ bool GameLayer::onContactBegin(PhysicsContact & contact)
 
 		if (nodeA->getPhysicsBody()->getTag() == PLAYER_TAG && nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG)
 		{
-			//findEnemyandHurt(nodeA);
+			cplayer->damage();
 			return true;
 		}
-		else if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
+		else if (nodeA->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
 		{
-			//findEnemyandHurt(nodeB);
+			cplayer->damage();
 			return true;
 		}
-
-
 	}
-	return false;
+	return true;
 }
 
 bool GameLayer::onContactPost(PhysicsContact & contact)
