@@ -4,11 +4,20 @@
 #include "cocos2d.h"
 using namespace cocos2d;
 
+//PHYSICS MOVEMENT
+/*---------------------------------------------------------- */
 #define UP Vec2(0,1);
 #define DOWN Vec2(0,-1);
 #define LEFT Vec2(-1,0);
 #define RIGHT Vec2(1,0);
-
+#define VELOCITYLIMIT 150
+#define FACELEFT "Left"
+#define FACERIGHT "Right"
+#define FACEUP "Back"
+#define FACEDOWN "Front"
+/*---------------------------------------------------------- *
+//PHYSICS COLLISION DETECTION
+/*---------------------------------------------------------- */
 #define PLAYER_TAG 1
 #define ENEMY_TAG 2
 #define BULLET_TAG 3
@@ -21,23 +30,15 @@ using namespace cocos2d;
 #define ENEMYBULLET_CATEGORY 0x0004 
 #define PLAYERBULLET_CATEGORY 0x0008
 #define WALL_CATEGORY 0x0016
-
-#define MAXTIME 60
-
 #define MASK_PLAYER WALL_CATEGORY | ENEMYBULLET_CATEGORY
 #define MASK_ENEMY WALL_CATEGORY | PLAYERBULLET_CATEGORY
 #define MASK_PLAYERBULLET WALL_CATEGORY | ENEMY_CATEGORY
 #define MASK_ENEMYBULLET WALL_CATEGORY | PLAYER_CATEGORY
 #define MASK_WALL -1
-
-// 1 + 8 + 32 = 39
-// 1 + 1000 + 100000 = 00101001
-//00000001 = 1
-//00000010 = 2
-//00000100 = 4
-//00001000 = 8
-//00010000 = 16
-//00100000 = 32
+/*---------------------------------------------------------- */
+//LEVEL SETUP
+/*---------------------------------------------------------- */
+#define MAXTIME 60
 #define MAX_PLAYER_HEALTH 20
 
 #define PISTOLPICKUPTAG 1000
@@ -49,11 +50,6 @@ using namespace cocos2d;
 #define AKNAME "AK-47"
 #define M16NAME "M-16"
 
-#define FACELEFT "l" // L 
-#define FACERIGHT "r"
-#define FACEUP "u"
-#define FACEDOWN "d"
-
 #define PLAYERNAME "Player"
 #define ESLEEP 1
 #define	ESEEK 2
@@ -61,9 +57,6 @@ using namespace cocos2d;
 
 #define ENEMYMOVESPAWN 1
 #define ENEMYATTACK 2
-
-#define MAXWALKACCEL 200
-#define MAXRUNACCEL 400
 
 #endif // !_DEFINITIONS_H_
 

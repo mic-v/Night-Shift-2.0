@@ -6,7 +6,7 @@
 #include "GameScene.h"
 #include "SplashScene.h"
 
-// #define USE_AUDIO_ENGINE 1
+ #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE && USE_SIMPLE_AUDIO_ENGINE
@@ -107,7 +107,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	//director->setProjection(Director::Projection::_2D);
 	//director->setDepthTest(true);
 	director->setDisplayStats(true);
-	DISPLAY->init(1920.0f, 1080.0f, "Night Shift", true);
+	DISPLAY->init(1920.0f, 1080.0f, "Night Shift", false);
 	//auto scene = GameScene::createScene();
 	auto scene = SplashScene::createScene();
 	director->runWithScene(scene);

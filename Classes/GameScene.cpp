@@ -1,12 +1,12 @@
 #include "GameScene.h"
 #include "InputHandler.h"
 #include "DisplayHandler.h"
-#include "SimpleAudioEngine.h"
 #include "GameCamera.h"
 #include "GameOverScene.h"
-
-USING_NS_CC;
+#include "audio/include/AudioEngine.h"
+using namespace cocos2d::experimental;
 using namespace cocos2d;
+USING_NS_CC;
 
 Scene* GameScene::scenehandle = nullptr;
 Layer* GameScene::layerhandle = nullptr;
@@ -19,7 +19,7 @@ Scene* GameScene::createScene()
 	scene->addChild(layer);
 	PhysicsWorld* phys = scene->getPhysicsWorld();
 	phys->setGravity(Vec2(0, 0));
-	//phys->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	/*phys->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);*/
 
 	return scene;
 
@@ -60,10 +60,13 @@ bool GameScene::init()
 	//this->addChild(sceneCamera);
 	auto gameOverListener = EventListenerCustom::create("gameOver", [=](EventCustom* event) {
 		Scene *scene = GameOverScene::createScene();
-		TransitionFade *transition = TransitionFade::create(4.f, scene);
-		Director::getInstance()->replaceScene(transition);
+		TransitionFade *transition = TransitionFade::create(3.f, scene);
+		Director::getInstance()->pushScene(transition);
+		AudioEngine::stopAll();
 	});
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(gameOverListener, this);
+
+	AudioEngine::play2d("Sounds/Music/OnlyYou.mp3", true, 0.05f);
 
 	this->scheduleUpdate();
 

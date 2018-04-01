@@ -101,7 +101,8 @@ void MainMenu::menuCloseCallback(cocos2d::Ref * pSender)
 void MainMenu::menuGameCallback(cocos2d::Ref * pSender)
 {
 	Scene *scene = GameScene::createScene();
-	Director::getInstance()->replaceScene(scene);
+	TransitionFade *transition = TransitionFade::create(2.f, scene);
+	Director::getInstance()->replaceScene(transition);
 	CAMERA->init();
 }
 

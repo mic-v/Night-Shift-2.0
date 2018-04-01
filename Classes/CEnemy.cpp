@@ -111,6 +111,10 @@ void CEnemy::update(float dt)
 	}
 	updateMovement();
 	updateAnimation();
+
+	auto p = this->getPosition() - Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f);
+	p = CC_POINT_POINTS_TO_PIXELS(p);
+	this->setLocalZOrder(-((p.y + 64) / 64));
 }
 
 void CEnemy::updateMovement()
@@ -201,17 +205,9 @@ void CEnemy::exitSpawn(float dt)
 		else
 		{
 			mood = ENEMYATTACK;
-			//this->getPhysicsBody()->setCategoryBitmask(ENEMY_CATEGORY);
-			//this->getPhysicsBody()->setCollisionBitmask(MASK_ENEMY);
-			//this->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
-			//this->getPhysicsBody()->setGroup(-1);
-			//this->getPhysicsBody()->setTag(ENEMY_TAG);
+			pastSpawnGate = true;
 			this->getPhysicsBody()->setVelocity(Vec2(0, 0));
 			this->getPhysicsBody()->setGroup(-1);
-			//accelL = false;
-			//accelR = false;
-			//accelU = false;
-			//accelD = false;
 			weapons[cWeapNum]->setVisible(true);
 		}
 	}
@@ -221,12 +217,8 @@ void CEnemy::exitSpawn(float dt)
 			accelD = true;
 		else
 		{
+			pastSpawnGate = true;
 			mood = ENEMYATTACK;
-			//this->getPhysicsBody()->setCategoryBitmask(ENEMY_CATEGORY);
-			//this->getPhysicsBody()->setCollisionBitmask(MASK_ENEMY);
-			//this->getPhysicsBody()->setContactTestBitmask(0xFFFFFFFF);
-			//this->getPhysicsBody()->setGroup(-1);
-			//this->getPhysicsBody()->setTag(ENEMY_TAG);
 			this->getPhysicsBody()->setVelocity(Vec2(0, 0));
 			this->getPhysicsBody()->setGroup(-1);
 			accelL = false;
@@ -243,6 +235,7 @@ void CEnemy::exitSpawn(float dt)
 			accelU = true;
 		else
 		{
+			pastSpawnGate = true;
 			mood = ENEMYATTACK;
 			this->getPhysicsBody()->setVelocity(Vec2(0, 0));
 			this->getPhysicsBody()->setGroup(-1);
@@ -316,7 +309,7 @@ void CEnemy::removeEnemy()
 {
 	//Stop enemy's state 
 	mood = 5;
-
+	weapons[cWeapNum]->setVisible(false);
 	this->getPhysicsBody()->setVelocity(Vec2(0, 0));
 	this->getPhysicsBody()->setVelocityLimit(0);
 	this->getPhysicsBody()->removeFromWorld();
@@ -341,17 +334,9 @@ bool CEnemy::onContactBegin(PhysicsContact & contact)
 	{
 		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG)
 		{
-			if (!pastSpawnGate)
-			{
-				return false;
-			}
 		}
 		else if (nodeB->getPhysicsBody()->getTag() == ENEMY_TAG && nodeA->getPhysicsBody()->getTag() == WALL_TAG)
 		{
-			if (!pastSpawnGate)
-			{
-				return false;
-			}
 		}
 	}
 	return true;
@@ -365,17 +350,9 @@ bool CEnemy::onContactPost(PhysicsContact & contact)
 	{
 		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG)
 		{
-			if (!pastSpawnGate)
-			{
-				return false;
-			}
 		}
 		else if (nodeB->getPhysicsBody()->getTag() == ENEMY_TAG && nodeA->getPhysicsBody()->getTag() == WALL_TAG)
 		{
-			if (!pastSpawnGate)
-			{
-				return false;
-			}
 		}
 	}
 	return true;
@@ -387,14 +364,6 @@ bool CEnemy::onContactSeparate(PhysicsContact & contact)
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
 	if (nodeA && nodeB)
 	{
-		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG)
-		{
-			return true;
-		}
-		else if (nodeB->getPhysicsBody()->getTag() == ENEMY_TAG && nodeA->getPhysicsBody()->getTag() == WALL_TAG)
-		{
-			return true;
-		}
 	}
 	return true;
 }

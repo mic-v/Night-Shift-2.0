@@ -51,6 +51,7 @@ private:
 
 	SpriteFrame* idleFrame;
 	SpriteFrame* idleFrameLeft;
+	ParticleSystem* muzzle;
 };
 
 

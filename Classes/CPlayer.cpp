@@ -3,14 +3,9 @@
 #include "Definitions.h"
 #include "InputHandler.h"
 #include "GameCamera.h"
+#include "SimpleAudioEngine.h"
 CPlayer::CPlayer()
 {
-
-	velocityLimit = 200;
-	cWeapNum = 0;
-	isMoving = false;
-	isSprinting = false;
-	health = MAX_PLAYER_HEALTH;
 }
 
 CPlayer::~CPlayer()
@@ -41,7 +36,7 @@ bool CPlayer::init(const std::string & fileName)
 	PhysicsBody* cbody = PhysicsBody::createBox(Size(61,159), PhysicsMaterial(1.f,1.f,1.f));
 	cbody->setDynamic(true);
 	cbody->setRotationEnable(false);
-	cbody->setVelocityLimit(130);
+	cbody->setVelocityLimit(VELOCITYLIMIT);
 	cbody->setCategoryBitmask(PLAYER_CATEGORY);
 	cbody->setCollisionBitmask(MASK_PLAYER);
 	cbody->setContactTestBitmask(0xFFFFFFFF);
@@ -53,15 +48,43 @@ bool CPlayer::init(const std::string & fileName)
 
 	hspeed = 70;
 	vspeed = 70;
+	sprintDuration = 0.f;
+	cWeapNum = 0;
+	isMoving = false;
+	isSprinting = false;
+	health = MAX_PLAYER_HEALTH;
 
 	initAnimations();
 
+	border = Sprite::create("UI/dashCooldownframe.png");
+	border->setAnchorPoint(Vec2(0.5, 0.5));
+	border->setPosition(this->getContentSize().width * 0.5f, -10);
+	border->runAction(Hide::create());
+	this->addChild(border, 0, "hpBorder");
+
+	bar = Sprite::create("UI/dashCooldownbar.png");
+	bar->setAnchorPoint(Vec2(0, 0));
+
+	dashBar = ProgressTimer::create(bar);
+	dashBar->setType(ProgressTimerType::BAR);
+	dashBar->setAnchorPoint(Vec2(0, 0));
+	dashBar->setBarChangeRate(Vec2(1, 0));
+	dashBar->setMidpoint(Vec2(0, 0));
+	border->addChild(dashBar, 10, "dashBar");
+	dashBar->setPercentage(100);
+
+	auto dashListener = EventListenerCustom::create("dash", [=](EventCustom* event) {
+		//border->setVisible(true);
+		dashBar->runAction(ProgressFromTo::create(4, 0, 100));
+	});
+
+	/* PHYSICS CONTACT LISTENERS*/
 	auto contactListene = EventListenerPhysicsContact::create();
 	contactListene->onContactBegin = CC_CALLBACK_1(CPlayer::onContactBegin, this);
 	contactListene->onContactPreSolve = CC_CALLBACK_1(CPlayer::onContactPost, this);
 	contactListene->onContactSeparate = CC_CALLBACK_1(CPlayer::onContactSeparate, this);
 	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListene, this);
-	
+	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(dashListener, this);
 	this->scheduleUpdate();
 
 	return true;
@@ -172,7 +195,11 @@ void CPlayer::handleInput()
 
 void CPlayer::handleMovement(float dt)
 {
-	isSprinting = false;
+	if (sprintDuration <= 0.f)
+		isSprinting = false;
+	if(dashBar->getPercentage() == 100)
+		border->runAction(Hide::create());
+
 	isMoving = false;
 	if (INPUTS->getKey(KeyCode::KEY_A) || INPUTS->getKey(KeyCode::KEY_D) || INPUTS->getKey(KeyCode::KEY_W) || INPUTS->getKey(KeyCode::KEY_S))
 	{
@@ -187,22 +214,33 @@ void CPlayer::handleMovement(float dt)
 		}
 		if (INPUTS->getKeyPress(KeyCode::KEY_SHIFT))
 		{
-			isSprinting = true;
+			if (!isSprinting  && dashBar->getPercentage() == 100)
+			{
+				isSprinting = true;
+				border->runAction(Show::create());
+				this->runAction(Sequence::create(TintTo::create(0.1f, Color3B(183, 224, 255)), TintTo::create(0.1f, Color3B(255, 255, 255)), NULL));
+				EventCustom event("dash");
+				_eventDispatcher->dispatchEvent(&event);
+			}
 		}
 	}
 
 	if (isSprinting)
 	{
-		this->getPhysicsBody()->setVelocityLimit(1200);
-		hspeed = 1200;
-		vspeed = 1200;
-		std::cout << "SPRINT SPRINT SPRINT" << std::endl;
+		this->getPhysicsBody()->setVelocityLimit(VELOCITYLIMIT * 2);
+		hspeed = 120;
+		vspeed = 120;
+		sprintDuration += dt;
+		if (sprintDuration >= 0.5f)
+		{
+			sprintDuration = 0.f;
+		}
 	}
 	else
 	{
-		this->getPhysicsBody()->setVelocityLimit(130);
 		hspeed = 70;
 		vspeed = 70;
+		this->getPhysicsBody()->setVelocityLimit(VELOCITYLIMIT);
 	}
 	velocity = Vec2(0, 0);
 	if (INPUTS->getKey(KeyCode::KEY_A))
@@ -225,9 +263,7 @@ void CPlayer::handleMovement(float dt)
 		velocity += Vec2(0, -1) * vspeed;
 		velNorm += Vec2(0, -1);
 	}
-	//}
 	Vec2 nextVelocity = velocity;
-	//this->getPhysicsBody()->applyForce(velocity4);
 	if (isMoving)
 	{
 		this->getPhysicsBody()->setVelocity(this->getPhysicsBody()->getVelocity() + nextVelocity);
@@ -246,10 +282,6 @@ void CPlayer::updateCamera(float dt)
 	Vec2 camPos = this->getPosition() - (this->getPosition() - screenMos) / 4.f;
 	screenMos -= (this->getPosition() - screenMos) / 4.f;
 
-	//float lerp = 0.1f;
-	//camPos.x += (this->position.x - camPos.x) / 100.f;
-	//camPos.y += (this->position.y - camPos.y) / 100.f;
-
 	CAMERA->setOrigin(origin);
 	CAMERA->setScreenMouse(screenMos);
 	CAMERA->setCameraPosition(camPos);
@@ -264,31 +296,72 @@ void CPlayer::updateAnimation(float dt)
 	//Set rotation of the gun
 	faceLeft_ = false;
 	faceRight_ = false;
+	faceUp_ = false;
+	faceDown_ = false;
 	if (CAMERA->getScreenMouse().x < this->getPosition().x)
 	{
 		if (weapons.size() != 0)
 			weapons[cWeapNum]->setScaleX(-1.f);
 		rot_ = 360 - rot_;
-		faceLeft_ = true;
 		
 	}
 	else
 	{
 		if (weapons.size() != 0)
 			weapons[cWeapNum]->setScaleX(1.f);
-		faceRight_ = true;
 	}
 	if (weapons.size() != 0)
 		weapons[cWeapNum]->setRotation(rot_);
 
+	if (rot_ >= -45 && rot_ < 45)
+		faceRight_ = true;
+	else if (rot_ >= 45 && rot_ < 315)
+		faceDown_ = true;
+	else if (rot_ >= 315 && rot_ < 405)
+		faceLeft_ = true;
+	else
+		faceUp_ = true;
 	//Determine if the character is facing left, right, up or down. It is very important for the animation
 	if (faceLeft_)
 		orientation_ = FACELEFT;
 	else if (faceRight_)
 		orientation_ = FACERIGHT;
+	else if (faceDown_)
+		orientation_ = FACEDOWN;
+	else
+		orientation_ = FACEUP;
 
-	if (isMoving)
+	if (weapons.size() != 0)
 	{
+		if (cOrientation_ == FACEUP)
+			weapons[cWeapNum]->setLocalZOrder(-1000);
+		else
+			weapons[cWeapNum]->setLocalZOrder(1000);
+	}
+	if (isSprinting)
+	{
+		animationTimer += dt;
+		if (animationTimer >= 0.125f * animationCounter)
+			animationCounter++;
+		if (animationCounter >= 4)
+		{
+			animationCounter = 1;
+			animationTimer = 0.0f;
+		}
+		if (currentACounter != animationCounter)
+		{
+			currentACounter = animationCounter;
+			if (cOrientation_ != orientation_)
+			{
+				cOrientation_ = orientation_;
+			}
+			string tmp = "CharacterAnimations/Player/Running/" + cOrientation_ + "/frame" + to_string(animationCounter) + ".png";
+			this->setTexture(tmp);
+		}
+	}
+	else if (isMoving)
+	{
+		//CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sounds/Character/Walking.wav", false);
 		animationTimer += dt;
 		if (animationTimer >= 0.09f * animationCounter)
 			animationCounter++;
@@ -305,8 +378,7 @@ void CPlayer::updateAnimation(float dt)
 			{
 				cOrientation_ = orientation_;
 			}
-			string tmp = "CharacterAnimations/Player/Walking/frame-" + cOrientation_ + "-00" + to_string(animationCounter) + ".png";
-			//string tmp = "CharacterAnimations/Player/Walking/frame" + to_string(animationCounter) + ".png";
+			string tmp = "CharacterAnimations/Player/Walking/" + cOrientation_ + "/frame" + to_string(animationCounter) + ".png";
 			this->setTexture(tmp);
 		}
 	}
@@ -319,7 +391,7 @@ void CPlayer::updateAnimation(float dt)
 		{
 			cOrientation_ = orientation_;
 		}
-		string tmp = "CharacterAnimations/Player/idle" + cOrientation_ + ".png";
+		string tmp = "CharacterAnimations/Player/Walking/" + cOrientation_ + "/idle.png";
 		this->setTexture(tmp);
 	}
 }
@@ -332,7 +404,6 @@ void CPlayer::update(float dt)
 	auto p = this->getPosition() - Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f);
 	p = CC_POINT_POINTS_TO_PIXELS(p);
 	this->setLocalZOrder(-((p.y + 64) / 64));
-
 }
 bool CPlayer::onContactBegin(PhysicsContact & contact)
 {
@@ -353,9 +424,10 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 				weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f - 10.f));
 				weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
 				if (nodeA->getName() == "AK47.png")
-				{
 					weapon->setAnchorPoint(Vec2(0.25f, 0.5f));
-				}
+				else
+					weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
+
 				this->addChild(weapon);
 				weapon->displayEquip();
 				weapons.push_back(weapon);
@@ -366,11 +438,12 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 			{
 				Weapon* weapon = Weapon::create(nodeB->getName());
 				weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f - 10.f));
-				weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
+
 				if (nodeB->getName() == "AK47.png")
-				{
 					weapon->setAnchorPoint(Vec2(0.25f, 0.5f));
-				}
+				else
+					weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
+
 				weapon->setIfPlayer(true);
 				this->addChild(weapon);
 				weapon->displayEquip();
@@ -398,6 +471,7 @@ void CPlayer::damage()
 	_eventDispatcher->dispatchEvent(&event);
 	if (this->health == 0)
 	{
+		weapons[cWeapNum]->setVisible(false);
 		this->stopAllActions();
 		this->runAction(dying);
 		this->unscheduleUpdate();

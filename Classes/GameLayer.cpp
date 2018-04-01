@@ -31,6 +31,10 @@ bool GameLayer::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	Sprite* cameraTarget_ = Sprite::create();
+	this->addChild(cameraTarget_);
+	CAMERA->setCameraTarget(cameraTarget_);
+	CAMERA->setCameraFollow();
 
 	// LEVEL SETUP
 	enemySpawn1 = Vec2(-320, 1728);
@@ -45,43 +49,25 @@ bool GameLayer::init()
 	spawnRate = 0.f;
 	randomSpawn = 0;
 	randomWeapon = 0;
-	//map->getLayer("Layer")->setGlobalZOrder(100);
-
-	//CEnemy* enmy2 = CEnemy::create();
-	//enmy2->getPhysicsBody()->setVelocity(Vec2(200, 0));
-	////enmy2->setPosition(1300, 1700);
-	//this->addChild(enmy2, 0);
 
 	cplayer = CPlayer::create("original.png");
 	cplayer->retain();
 	cplayer->setPosition(640, 640);
 	this->addChild(cplayer, 0, PLAYERNAME);
 
-	//enmy = CEnemy::create();
-	//enmy->setPlayer(*cplayer);
-	////enmy->setTexture("original.png");
-	//enmy->setSpawn(enemySpawn3);
-	//this->addChild(enmy);
-
-	Item* item = Item::create("AK47.png");
+	Item* item = Item::create("AK47NOHANDS.png");
 	item->setName("AK47.png");
 	item->setPosition(Vec2(750, 640));
 	this->addChild(item, 2);
-
-	//Enemy* enemy = Enemy::create();
-	////enemy->retain();
-	//this->addChild(enemy,0);
-	//enemy->setPosition(Vec2(3692, 1728));
-	////enemy->setPlayer(cplayer);
-	////enemy->setIfVertical(false);
-	////enemy->setSpawn(Vec2(3692,1728));
-	////enemyList.push_back(enemy);
 
 	roundStart_ = false;
 	dontmove = false;
 	wallCollision = false;
 	this->scheduleUpdate();
-	this->addChild(CAMERA->getCameraTarget());
+	//if (this->getChildByName("CAMERATARGET") == nullptr)
+	//{
+	//this->addChild(CAMERA->getCameraTarget(), 0, "CAMERATARGET");
+	//}
 	this->runAction(CAMERA->getCamera());
 
 	auto contactListener = EventListenerPhysicsContact::create();
@@ -219,6 +205,11 @@ void GameLayer::update(float dt)
 		{
 			EventCustom event("roundEnd");
 			_eventDispatcher->dispatchEvent(&event);
+			for (int i = 0; i < doorList.size(); i++)
+			{
+				doorList[i]->runAction(RemoveSelf::create());
+			}
+			doorList.clear();
 		}
 		else
 		{
@@ -237,7 +228,6 @@ bool GameLayer::onContactBegin(PhysicsContact & contact)
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
 	if (nodeA && nodeB)
 	{
-		std::cout << nodeA->getPhysicsBody()->getTag() << " " << nodeB->getPhysicsBody()->getTag() << std::endl;
 		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == BULLET_TAG)
 		{
 			findEnemyandHurt(nodeA);
@@ -297,12 +287,14 @@ void GameLayer::initLevel()
 	auto layerMeta = map->getLayer("LayerMeta");
 	auto layer64Top = map->getLayer("Layer64Top");
 	auto layer256 = map->getLayer("Layer256");
+	auto layer128 = map->getLayer("Layer128");
 	for (int i = 0; i < layerMeta->getLayerSize().width; i++)
 	{
 		for (int j = layerMeta->getLayerSize().height - 1; j >= 0; j--)
 		{
 			auto gid64 = layer64Top->getTileGIDAt(Vec2(i, j));
 			auto gid256 = layer256->getTileGIDAt(Vec2(i, j));
+			auto gid128 = layer128->getTileGIDAt(Vec2(i, j));
 			auto meta = layerMeta->getTileGIDAt(Vec2(i, j));
 			if (gid64)
 			{
@@ -330,6 +322,23 @@ void GameLayer::initLevel()
 				p = CC_POINT_POINTS_TO_PIXELS(p);
 				tile->setLocalZOrder(-((p.y + 64) / 64));
 				this->addChild(tile);
+			}
+			if (gid128)
+			{
+				Sprite* tile = Sprite::create("Pillar.png");
+				tile->setAnchorPoint(Vec2(0, 0));
+				tile->setPosition(Vec2(i * 64, (layer128->getLayerSize().height - j - 1) * 64));
+				auto p = tile->getPosition();
+				p = CC_POINT_POINTS_TO_PIXELS(p);
+				tile->setLocalZOrder(-((p.y + 64) / 64));
+				this->addChild(tile);
+
+				auto tilePhysics = PhysicsBody::createBox(Size(48, 64), PhysicsMaterial(1.0f, 1.0f, 0.0f));
+				tilePhysics->setDynamic(false);
+				tilePhysics->setGroup(-3);
+				tilePhysics->setContactTestBitmask(0xFFFFFFFF);
+				tilePhysics->setTag(WALL_TAG);
+				tile->setPhysicsBody(tilePhysics);
 			}
 			if (meta)
 			{
@@ -396,6 +405,7 @@ void GameLayer::initLevel()
 	}
 	map->removeChildByTag(1);
 	map->removeChildByTag(2);
+	map->removeChildByTag(3);
 }
 
 void GameLayer::findEnemyandHurt(Node* node)

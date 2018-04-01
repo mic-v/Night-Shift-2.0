@@ -41,6 +41,10 @@ bool Projectile::init(const std::string & fileName)
 	return true;
 }
 
+void Projectile::update(float dt)
+{
+}
+
 void Projectile::setShot(Vec2 position, Vec2 direction)
 {
 	this->setPosition(position);
@@ -87,19 +91,23 @@ bool Projectile::onContactBegin(PhysicsContact & contact)
 		//PLAYER CHECK
 		if (nodeA->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
 		{
+			nodeB->runAction(Sequence::create(TintTo::create(0.1f, Color3B(255, 0, 0)), TintTo::create(0.1f, Color3B(255, 255, 255)), NULL));
 			nodeA->runAction(RemoveSelf::create());
 		}
 		else if (nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeA->getPhysicsBody()->getTag() == PLAYER_TAG)
 		{
+			nodeA->runAction(Sequence::create(TintTo::create(0.1f, Color3B(255, 0, 0)), TintTo::create(0.1f, Color3B(255, 255, 255)), NULL));
 			nodeB->runAction(RemoveSelf::create());
 		}
 		//ENEMY CHECK
 		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG)
 		{
+			nodeB->runAction(Sequence::create(TintTo::create(0.1f, Color3B(255, 0, 0)), TintTo::create(0.1f, Color3B(255, 255, 255)), NULL));
 			nodeA->runAction(RemoveSelf::create());
 		}
 		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == ENEMY_TAG)
 		{
+			nodeA->runAction(Sequence::create(TintTo::create(0.1f, Color3B(255, 0, 0)), TintTo::create(0.1f, Color3B(255, 255, 255)), NULL));
 			nodeB->runAction(RemoveSelf::create());
 		}
 

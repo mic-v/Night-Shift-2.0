@@ -4,7 +4,9 @@
 #include "DisplayHandler.h"
 #include "GameCamera.h"
 #include "Definitions.h"
+#include "audio/include/AudioEngine.h"
 #include <iomanip>
+using namespace cocos2d::experimental;
 
 Weapon::Weapon()
 {
@@ -72,6 +74,7 @@ bool Weapon::init(const std::string & fileName)
 		initAKAnimation();
 	}
 
+	muzzle = ParticleSystem::create("Particles/muzzleFlash.plist");
 	this->scheduleUpdate();
 
 	return true;
@@ -83,7 +86,6 @@ void Weapon::initAnimations()
 
 void Weapon::initPistolAnimations()
 {
-	std::cout << "initialize" << std::endl;
 	FileUtils::getInstance()->addSearchResolutionsOrder("HDR");
 	auto spritecache = SpriteFrameCache::getInstance();
 	spritecache->addSpriteFramesWithFile("res/HDR/pistol_fire_right.plist");
@@ -110,7 +112,7 @@ void Weapon::initPistolAnimations()
 	spritecache->addSpriteFramesWithFile("res/HDR/pistolreload.plist");
 
 	Vector<SpriteFrame*> reloadR;
-	for (int i = 0; i < 23; i++)
+	for (int i = 0; i < 22; i++)
 	{
 		stringstream ss1;
 		ss1 << "frame-r-" << setfill('0') << setw(3) << i + 1 << ".png";
@@ -127,7 +129,6 @@ void Weapon::initPistolAnimations()
 
 void Weapon::initAKAnimation()
 {
-	std::cout << "initialize" << std::endl;
 	FileUtils::getInstance()->addSearchResolutionsOrder("HDR");
 	auto spritecache = SpriteFrameCache::getInstance();
 	spritecache->addSpriteFramesWithFile("res/HDR/AK47_firing_right.plist");
@@ -201,7 +202,6 @@ void Weapon::enemyFire(const Vec2 & pos_, const Vec2 & dir)
 				if (isPistol_)
 					projectile->setTexture("0305Bullet.png");
 				projectile->setShot(position_, dir_);
-				//std::cout << projectile->getPosition().x << " ASD " << projectile->getPosition().y << std::endl;
 				this->getParent()->getParent()->addChild(projectile);
 			}
 			fired = true;
@@ -241,8 +241,6 @@ void Weapon::update(float dt)
 {
 	if (player)
 	{
-		//	bool pressed = INPUTS->getMouseButton(MouseButton::BUTTON_LEFT);
-		//	bool pressedR = INPUTS->getKey(KeyCode::KEY_R);
 		if (!reloading)
 		{
 			fireState = INPUTS->getMouseButton(MouseButton::BUTTON_LEFT);
@@ -276,18 +274,34 @@ void Weapon::update(float dt)
 				projectile->setRotation(rot_);
 				projectile->setShot(position_, direction);
 
-				//Get Parent(Player), get its parent(Layer), then add the projectile to layercccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+				//Get Parent(Player), get its parent(Layer), then add the projectile to layer
 				this->getParent()->getParent()->addChild(projectile);
 				fired = true;
 				ammo--;
 				EventCustom event2("ammo");
-				if (isPistol_)
+				if (this->getTag() == PISTOLPICKUPTAG)
+				{
+					string tmp = to_string(ammo) + " / Infinite";
+					event2.setUserData((void*)tmp.c_str());
+					_eventDispatcher->dispatchEvent(&event2);
+				}
+				else if(this->getTag() == AKPICKUPTAG)
 				{
 					string tmp = to_string(ammo) + " / Infinite";
 					event2.setUserData((void*)tmp.c_str());
 					_eventDispatcher->dispatchEvent(&event2);
 				}
 				this->runAction(animFire);
+
+				auto gunMuzle = ParticleSystemQuad::create("Particles/muzzleFlash.plist");
+				//auto gunMuzle = ParticleExplosion::create();
+				gunMuzle->setDuration(0.2f);
+				gunMuzle->setPosition(position_);
+				gunMuzle->setAutoRemoveOnFinish(true);
+				this->getParent()->getParent()->addChild(gunMuzle);
+
+				AudioEngine::play2d("Sounds/Gun/AK47fire.mp3", false);
+				
 			}
 			else if (fired)
 			{
@@ -297,14 +311,11 @@ void Weapon::update(float dt)
 					this->stopAllActions();
 					this->setSpriteFrame(idleFrame);
 				}
-				//shotTimer += dt;
-				//if (shotTimer > 0.5f)
-				//{
-				//	this->stopAllActions();
-				//	this->setSpriteFrame(idleFrame);
-				//	shotTimer = 0;
-				//	fired = false;
-				//}
+			}
+			
+			if (ammo <= 0)
+			{
+				AudioEngine::play2d("Sounds/Gun/outofammo.mp3", false);
 			}
 		}
 		else if (reloadState)
@@ -332,88 +343,16 @@ void Weapon::update(float dt)
 					event2.setUserData((void*)tmp.c_str());
 					_eventDispatcher->dispatchEvent(&event2);
 				}
+				else
+				{
+					string tmp = to_string(ammo) + " / Infinite";
+					event2.setUserData((void*)tmp.c_str());
+					_eventDispatcher->dispatchEvent(&event2);
+				}
 			}
 		}
 	}
-	//if (player)
-	//{
-	//	bool pressed = INPUTS->getMouseButton(MouseButton::BUTTON_LEFT);
-	//	bool pressedR = INPUTS->getKey(KeyCode::KEY_R);
-	//	if (pressed && shotTimer == 0 && !pressedR)
-	//	{
-	//		if (ammo >= 1)
-	//		{
-	//			this->runAction(animFire);
-	//			Vec2 position_ = CAMERA->getCameraTarget()->convertToWorldSpace(this->getPosition()) + CAMERA->getOrigin() - (CAMERA->getOrigin() + Vec2(DISPLAY->getWindowSizeAsVec2().x * 0.5f, DISPLAY->getWindowSizeAsVec2().y * 0.5f) - CAMERA->getScreenMouse()) / 4.f;
-	//			Vec2 direction = CAMERA->getScreenMouse() - (CAMERA->getOrigin() + Vec2(DISPLAY->getWindowSizeAsVec2().x * 0.5f, DISPLAY->getWindowSizeAsVec2().y * 0.5f));
-	//			position_ = (CAMERA->getOrigin() + Vec2(DISPLAY->getWindowSizeAsVec2().x * 0.5f, DISPLAY->getWindowSizeAsVec2().y * 0.5f)) + position_.getNormalized() + direction.getNormalized() * 100.f;
-	//			Projectile* projectile;
-	//			if (isPistol_)
-	//			{
-	//				//projectile = Projectile::create("0305Bullet.png");
-	//				//if (player)
-	//				//	projectile->getPhysicsBody()->setTag(4);
-	//				//projectile->setPosition(position_);
-	//				//std::cout << position_.x << std::endl;
-	//				//this->getParent()->getParent()->addChild(projectile);
-	//				projectile = Projectile::create("0305Bullet.png");
-	//				projectile->getPhysicsBody()->setTag(4);
-	//				if (isPistol_)
-	//					projectile->setTexture("0305Bullet.png");
-
-	//				float rot_ = Vec2::angle(Vec2(0, 1), direction.getNormalized()) * (180.f / M_PI) - 90.f;
-
-
-	//				projectile->setRotation(rot_);
-	//				projectile->setShot(position_, direction);
-	//				//projectile->setPosition(position_);
-	//				this->getParent()->getParent()->addChild(projectile);
-	//			}
-	//			fired = true;
-	//			ammo--;
-	//		}
-	//	}
-	//	if (fired)
-	//	{
-	//		shotTimer += dt;
-	//	}
-	//	if (shotTimer > 0.5f)
-	//	{
-	//		this->stopAllActions();
-	//		this->setSpriteFrame(idleFrame);
-	//		shotTimer = 0;
-	//		fired = false;
-	//		//fired = false;
-	//	}
-	//}
-	//else
-	//{
-	//	if (ammo == 0)
-	//	{
-	//		reloadTimer += dt;
-	//		//std::cout << reloadTimer << std::endl;
-	//		if (reloadTimer > 2.f)
-	//		{
-	//			if(isPistol_)
-	//			{
-	//				ammo = 7;
-	//			}
-	//			reloadTimer = 0.f;
-	//		}
-	//	}
-	//	if (fired)
-	//	{
-	//		shotTimer += dt;
-	//	}
-	//	if (shotTimer > 0.5f)
-	//	{
-	//		this->stopAllActions();
-	//		this->setSpriteFrame(idleFrame);
-	//		shotTimer = 0;
-	//		fired = false;
-	//	}
-	//}
-	INPUTS->clearForNextFrame();
+	//INPUTS->clearForNextFrame();
 }
 
 void Weapon::displayEquip()

@@ -12,6 +12,8 @@ public:
 	static Projectile* create(const std::string&);
 	bool init(const std::string&);
 	
+	void update(float);
+
 	void setShot(Vec2, Vec2);
 
 	bool onContactBegin(PhysicsContact&);

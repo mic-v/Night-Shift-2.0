@@ -17,6 +17,8 @@ public:
 	//Get the Camera
 	static GameCamera* getInstance();
 
+	static void destroyInstance();
+
 	//Get the target the Camera is following
 	Follow* getCamera();
 
@@ -43,6 +45,8 @@ public:
 	void setOrigin(Vec2);
 	void setScreenMouse(Vec2);
 	void setCameraPosition(Vec2);
+	void setCameraTarget(Sprite*);
+	void setCameraFollow();
 
 	//void updateCamera(CPlayer *);
 

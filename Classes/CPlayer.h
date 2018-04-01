@@ -22,8 +22,6 @@ public:
 
 	void update(float);
 
-	//void updateWeaponUI();
-
 	bool onContactBegin(PhysicsContact &);
 	bool onContactPost(PhysicsContact &);
 	bool onContactSeparate(PhysicsContact &);
@@ -34,7 +32,11 @@ public:
 private:
 	float hspeed;
 	float vspeed;
+	float sprintDuration;
 	SpriteFrame* idleFrameL;
+	Sprite* border;
+	Sprite* bar;
+	ProgressTimer* dashBar;
 };
 
 #endif // !_CPLAYER_H_

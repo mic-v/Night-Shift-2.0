@@ -9,10 +9,6 @@ GameCamera* GameCamera::inst = nullptr;
 GameCamera::GameCamera()
 {
 	hasBeenInit = false;
-
-	cameraTarget = Sprite::create();
-	cameraTarget->setPosition(Vec2(0, 0));
-	camera = Follow::create(cameraTarget, Rect::ZERO);
 	origin = Director::getInstance()->getVisibleOrigin();
 }
 
@@ -39,6 +35,13 @@ GameCamera * GameCamera::getInstance()
 
 	//Return the singleton instance
 	return inst;
+}
+
+void GameCamera::destroyInstance()
+{
+	if (inst)
+		delete inst;
+	inst = nullptr;
 }
 
 void GameCamera::init()
@@ -86,6 +89,16 @@ void GameCamera::setCameraPosition(Vec2 camPos_)
 {
 
 	camPos = camPos_;
+}
+
+void GameCamera::setCameraTarget(Sprite * camera_)
+{
+	cameraTarget = camera_;
+}
+
+void GameCamera::setCameraFollow()
+{
+	camera = Follow::create(cameraTarget, Rect::ZERO);
 }
 
 //void GameCamera::updateCamera(CPlayer * player)

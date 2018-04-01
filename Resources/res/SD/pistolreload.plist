@@ -9,483 +9,462 @@
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,0}</string>
+                <string>{2.5,1}</string>
                 <key>spriteSize</key>
-                <string>{20,8}</string>
+                <string>{18,6}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{47,63},{20,8}}</string>
+                <string>{{43,50},{18,6}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 12 6 12 6 4 26 4</string>
+                <string>23 6 5 6 5 0 23 0</string>
                 <key>verticesUV</key>
-                <string>67 71 47 71 47 63 67 63</string>
+                <string>61 56 43 56 43 50 61 50</string>
             </dict>
             <key>frame-r-002.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,0}</string>
+                <string>{2.5,1}</string>
                 <key>spriteSize</key>
-                <string>{20,8}</string>
+                <string>{18,6}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{1,78},{20,8}}</string>
+                <string>{{22,60},{18,6}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 12 6 12 6 4 26 4</string>
+                <string>23 6 5 6 5 0 23 0</string>
                 <key>verticesUV</key>
-                <string>21 86 1 86 1 78 21 78</string>
+                <string>40 66 22 66 22 60 40 60</string>
             </dict>
             <key>frame-r-003.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,-0.5}</string>
+                <string>{2.5,0.5}</string>
                 <key>spriteSize</key>
-                <string>{20,9}</string>
+                <string>{18,7}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{24,64},{20,9}}</string>
+                <string>{{22,51},{18,7}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 13 6 13 6 4 26 4</string>
+                <string>23 7 5 7 5 0 23 0</string>
                 <key>verticesUV</key>
-                <string>44 73 24 73 24 64 44 64</string>
+                <string>40 58 22 58 22 51 40 51</string>
             </dict>
             <key>frame-r-004.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,-0.5}</string>
+                <string>{2,0.5}</string>
                 <key>spriteSize</key>
-                <string>{20,9}</string>
+                <string>{19,7}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{48,40},{20,9}}</string>
+                <string>{{44,31},{19,7}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 13 6 13 6 4 26 4</string>
+                <string>23 7 4 7 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>68 49 48 49 48 40 68 40</string>
+                <string>63 38 44 38 44 31 63 31</string>
             </dict>
             <key>frame-r-005.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-0.5,-1}</string>
+                <string>{2,0}</string>
                 <key>spriteSize</key>
-                <string>{21,10}</string>
+                <string>{19,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{49,27},{21,10}}</string>
+                <string>{{24,21},{19,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 14 5 14 5 4 26 4</string>
+                <string>23 8 4 8 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>70 37 49 37 49 27 70 27</string>
+                <string>43 29 24 29 24 21 43 21</string>
             </dict>
             <key>frame-r-006.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-0.5,-1}</string>
+                <string>{2,0}</string>
                 <key>spriteSize</key>
-                <string>{21,10}</string>
+                <string>{19,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{51,14},{21,10}}</string>
+                <string>{{26,11},{19,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 14 5 14 5 4 26 4</string>
+                <string>23 8 4 8 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>72 24 51 24 51 14 72 14</string>
+                <string>45 19 26 19 26 11 45 11</string>
             </dict>
             <key>frame-r-007.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-0.5,-1.5}</string>
+                <string>{2,0}</string>
                 <key>spriteSize</key>
-                <string>{21,11}</string>
+                <string>{19,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{28,14},{21,11}}</string>
+                <string>{{50,1},{19,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 15 5 15 5 4 26 4</string>
+                <string>23 8 4 8 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>49 25 28 25 28 14 49 14</string>
+                <string>69 9 50 9 50 1 69 1</string>
             </dict>
             <key>frame-r-008.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-1,-1.5}</string>
+                <string>{1.5,0}</string>
                 <key>spriteSize</key>
-                <string>{22,11}</string>
+                <string>{20,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{1,40},{22,11}}</string>
+                <string>{{1,31},{20,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 15 4 15 4 4 26 4</string>
+                <string>23 8 3 8 3 0 23 0</string>
                 <key>verticesUV</key>
-                <string>23 51 1 51 1 40 23 40</string>
+                <string>21 39 1 39 1 31 21 31</string>
             </dict>
             <key>frame-r-009.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-2,-1.5}</string>
+                <string>{0.5,0}</string>
                 <key>spriteSize</key>
-                <string>{24,11}</string>
+                <string>{22,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{29,1},{24,11}}</string>
+                <string>{{26,1},{22,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 15 2 15 2 4 26 4</string>
+                <string>23 8 1 8 1 0 23 0</string>
                 <key>verticesUV</key>
-                <string>53 12 29 12 29 1 53 1</string>
+                <string>48 9 26 9 26 1 48 1</string>
             </dict>
             <key>frame-r-010.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-3,-1.5}</string>
+                <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{26,11}</string>
+                <string>{23,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{1,1},{26,11}}</string>
+                <string>{{1,11},{23,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 15 0 15 0 4 26 4</string>
+                <string>23 8 0 8 0 0 23 0</string>
                 <key>verticesUV</key>
-                <string>27 12 1 12 1 1 27 1</string>
+                <string>24 19 1 19 1 11 24 11</string>
             </dict>
             <key>frame-r-011.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,0}</string>
+                <string>{2.5,1}</string>
                 <key>spriteSize</key>
-                <string>{20,8}</string>
+                <string>{18,6}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{24,75},{20,8}}</string>
+                <string>{{43,50},{18,6}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 12 6 12 6 4 26 4</string>
+                <string>23 6 5 6 5 0 23 0</string>
                 <key>verticesUV</key>
-                <string>44 83 24 83 24 75 44 75</string>
+                <string>61 56 43 56 43 50 61 50</string>
             </dict>
             <key>frame-r-012.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,0}</string>
+                <string>{2.5,1}</string>
                 <key>spriteSize</key>
-                <string>{20,8}</string>
+                <string>{18,6}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{24,75},{20,8}}</string>
+                <string>{{43,50},{18,6}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 12 6 12 6 4 26 4</string>
+                <string>23 6 5 6 5 0 23 0</string>
                 <key>verticesUV</key>
-                <string>44 83 24 83 24 75 44 75</string>
+                <string>61 56 43 56 43 50 61 50</string>
             </dict>
             <key>frame-r-013.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-2.5,-1.5}</string>
+                <string>{0,0}</string>
                 <key>spriteSize</key>
-                <string>{25,11}</string>
+                <string>{23,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{1,14},{25,11}}</string>
+                <string>{{1,1},{23,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 15 1 15 1 4 26 4</string>
+                <string>23 8 0 8 0 0 23 0</string>
                 <key>verticesUV</key>
-                <string>26 25 1 25 1 14 26 14</string>
+                <string>24 9 1 9 1 1 24 1</string>
             </dict>
             <key>frame-r-014.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-1.5,-1.5}</string>
+                <string>{1,0}</string>
                 <key>spriteSize</key>
-                <string>{23,11}</string>
+                <string>{21,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{1,27},{23,11}}</string>
+                <string>{{1,21},{21,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 15 3 15 3 4 26 4</string>
+                <string>23 8 2 8 2 0 23 0</string>
                 <key>verticesUV</key>
-                <string>24 38 1 38 1 27 24 27</string>
+                <string>22 29 1 29 1 21 22 21</string>
             </dict>
             <key>frame-r-015.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-0.5,-1.5}</string>
+                <string>{2,0}</string>
                 <key>spriteSize</key>
-                <string>{21,11}</string>
+                <string>{19,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{55,1},{21,11}}</string>
+                <string>{{1,41},{19,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 15 5 15 5 4 26 4</string>
+                <string>23 8 4 8 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>76 12 55 12 55 1 76 1</string>
+                <string>20 49 1 49 1 41 20 41</string>
             </dict>
             <key>frame-r-016.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-0.5,-1.5}</string>
+                <string>{2,0}</string>
                 <key>spriteSize</key>
-                <string>{21,11}</string>
+                <string>{19,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{1,53},{21,11}}</string>
+                <string>{{22,41},{19,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 15 5 15 5 4 26 4</string>
+                <string>23 8 4 8 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>22 64 1 64 1 53 22 53</string>
+                <string>41 49 22 49 22 41 41 41</string>
             </dict>
             <key>frame-r-017.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-0.5,-1.5}</string>
+                <string>{2,0}</string>
                 <key>spriteSize</key>
-                <string>{21,11}</string>
+                <string>{19,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{26,27},{21,11}}</string>
+                <string>{{1,51},{19,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 15 5 15 5 4 26 4</string>
+                <string>23 8 4 8 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>47 38 26 38 26 27 47 27</string>
+                <string>20 59 1 59 1 51 20 51</string>
             </dict>
             <key>frame-r-018.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-0.5,-1}</string>
+                <string>{2,0}</string>
                 <key>spriteSize</key>
-                <string>{21,10}</string>
+                <string>{19,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{1,66},{21,10}}</string>
+                <string>{{45,21},{19,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 14 5 14 5 4 26 4</string>
+                <string>23 8 4 8 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>22 76 1 76 1 66 22 66</string>
+                <string>64 29 45 29 45 21 64 21</string>
             </dict>
             <key>frame-r-019.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-0.5,-1}</string>
+                <string>{2,0}</string>
                 <key>spriteSize</key>
-                <string>{21,10}</string>
+                <string>{19,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{25,40},{21,10}}</string>
+                <string>{{23,31},{19,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 14 5 14 5 4 26 4</string>
+                <string>23 8 4 8 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>46 50 25 50 25 40 46 40</string>
+                <string>42 39 23 39 23 31 42 31</string>
             </dict>
             <key>frame-r-020.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{-0.5,-0.5}</string>
+                <string>{2,0}</string>
                 <key>spriteSize</key>
-                <string>{21,9}</string>
+                <string>{19,8}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{24,53},{21,9}}</string>
+                <string>{{47,11},{19,8}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 13 5 13 5 4 26 4</string>
+                <string>23 8 4 8 4 0 23 0</string>
                 <key>verticesUV</key>
-                <string>45 62 24 62 24 53 45 53</string>
+                <string>66 19 47 19 47 11 66 11</string>
             </dict>
             <key>frame-r-021.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,-0.5}</string>
+                <string>{2.5,0.5}</string>
                 <key>spriteSize</key>
-                <string>{20,9}</string>
+                <string>{18,7}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{47,52},{20,9}}</string>
+                <string>{{43,41},{18,7}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 13 6 13 6 4 26 4</string>
+                <string>23 7 5 7 5 0 23 0</string>
                 <key>verticesUV</key>
-                <string>67 61 47 61 47 52 67 52</string>
+                <string>61 48 43 48 43 41 61 41</string>
             </dict>
             <key>frame-r-022.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{0,0}</string>
+                <string>{2.5,1}</string>
                 <key>spriteSize</key>
-                <string>{20,8}</string>
+                <string>{18,6}</string>
                 <key>spriteSourceSize</key>
-                <string>{32,16}</string>
+                <string>{23,8}</string>
                 <key>textureRect</key>
-                <string>{{46,73},{20,8}}</string>
+                <string>{{1,61},{18,6}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
-                <string>26 12 6 12 6 4 26 4</string>
+                <string>23 6 5 6 5 0 23 0</string>
                 <key>verticesUV</key>
-                <string>66 81 46 81 46 73 66 73</string>
-            </dict>
-            <key>frame-r-023.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{0,0}</string>
-                <key>spriteSize</key>
-                <string>{20,8}</string>
-                <key>spriteSourceSize</key>
-                <string>{32,16}</string>
-                <key>textureRect</key>
-                <string>{{24,75},{20,8}}</string>
-                <key>textureRotated</key>
-                <false/>
-                <key>triangles</key>
-                <string>1 2 3 0 1 3</string>
-                <key>vertices</key>
-                <string>26 12 6 12 6 4 26 4</string>
-                <key>verticesUV</key>
-                <string>44 83 24 83 24 75 44 75</string>
+                <string>19 67 1 67 1 61 19 61</string>
             </dict>
         </dict>
         <key>metadata</key>
@@ -499,9 +478,9 @@
             <key>realTextureFileName</key>
             <string>pistolreload.png</string>
             <key>size</key>
-            <string>{77,87}</string>
+            <string>{70,68}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:6582aff15e752f3a5418dbf36e23c600:4683aac950b2991589c20f35bdfc4eb6:81cd8ba1691931c5f27a8ba70d24ee82$</string>
+            <string>$TexturePacker:SmartUpdate:23ee4fe00ef1f02aec29fa28a39c4bc0:284c68624656513ed155c06a1326da2b:81cd8ba1691931c5f27a8ba70d24ee82$</string>
             <key>textureFileName</key>
             <string>pistolreload.png</string>
         </dict>

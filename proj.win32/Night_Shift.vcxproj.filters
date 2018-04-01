@@ -134,9 +134,6 @@
     <ClInclude Include="..\Classes\MainMenu.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\CameraTarget.h">
-      <Filter>src\Objects\Character</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\CEnemy.h">
       <Filter>src\Objects\Character</Filter>
     </ClInclude>
