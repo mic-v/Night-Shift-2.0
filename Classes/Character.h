@@ -43,7 +43,8 @@ protected:
 	Vec2 velocity;
 	Vec2 velNorm;
 	Vec2 lastVel;
-	int speed;
+
+	float speed;
 
 
 	std::vector<Weapon*> weapons;
@@ -51,7 +52,8 @@ protected:
 
 	//current weapon equipped
 	unsigned int cWeapNum;
-
+	bool hasAk;
+	bool hasM16;
 	//NEW Animation
 	
 	bool faceLeft_;

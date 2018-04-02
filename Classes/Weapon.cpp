@@ -320,6 +320,7 @@ void Weapon::update(float dt)
 		}
 		else if (reloadState)
 		{
+
 			if (ammo != maxCartridgeAmmo)
 			{
 				reloading = true;

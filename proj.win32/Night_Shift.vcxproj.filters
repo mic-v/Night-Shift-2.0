@@ -81,6 +81,9 @@
     <ClCompile Include="..\Classes\GameOverScene.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\VictoryScene..cpp">
+      <Filter>src\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -138,6 +141,9 @@
       <Filter>src\Objects\Character</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameOverScene.h">
+      <Filter>src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\VictoryScene.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
   </ItemGroup>

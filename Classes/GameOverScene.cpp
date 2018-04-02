@@ -120,7 +120,7 @@ void GameOverScene::menuGameCallback(cocos2d::Ref * pSender)
 	TransitionFade *transition = TransitionFade::create(2.f, scene);
 	//Director::getInstance()->replaceScene(transition);
 	Director::getInstance()->pushScene(transition);
-	//CAMERA->init();
+	CAMERA->init();
 }
 
 void GameOverScene::menuMenuCallback(cocos2d::Ref * pSender)

@@ -40,8 +40,8 @@ bool MainMenu::init()
 	this->addChild(title);
 
 	auto closeItem = MenuItemImage::create(
-		"exit.png",
-		"exit_selected.png",
+		"UI/exit.png",
+		"UI/exit(selected).png",
 		CC_CALLBACK_1(MainMenu::menuCloseCallback, this));
 
 	float x = screenSize.width / 2 + origin.x;
@@ -49,8 +49,8 @@ bool MainMenu::init()
 	closeItem->setPosition(Vec2(x, y));
 
 	auto gameItem = MenuItemImage::create(
-		"startButton.png",
-		"startButton_selected.png",
+		"UI/start.png",
+		"UI/start(selected).png",
 		CC_CALLBACK_1(MainMenu::menuStartCallback, this));
 
 	x = screenSize.width / 2 + origin.x;
@@ -66,6 +66,13 @@ bool MainMenu::init()
 	this->addChild(newGameButton);
 	newGameButton->setVisible(false);
 	newGameButton->addTouchEventListener(CC_CALLBACK_2(MainMenu::newGameTouchEvent, this));
+
+	startGameButton = ui::Button::create("UI/start.png", "UI/start(selected).png");
+	startGameButton->setPosition(Vec2(screenSize.width / 2 + origin.x + 300, screenSize.height / 2 + origin.y));
+	this->addChild(startGameButton);
+	startGameButton->setVisible(false);
+	startGameButton->addTouchEventListener(CC_CALLBACK_2(MainMenu::startGameTouchEvent, this));
+
 
 
 	saveLabel = Label::createWithTTF("Saves", "fonts/double_pixel-7.ttf", 48);
@@ -147,7 +154,6 @@ void MainMenu::menuStartCallback(cocos2d::Ref * pSender)
 
 void MainMenu::menuSaveCallback(cocos2d::Ref * pSender, ui::Text::TouchEventType event)
 {
-	std::cout << "touch " << std::endl;
 }
 
 void MainMenu::startTouchEvent(cocos2d::Ref * pSender, ui::Widget::TouchEventType type)
@@ -186,6 +192,22 @@ void MainMenu::newGameTouchEvent(cocos2d::Ref * pSender, ui::Widget::TouchEventT
 
 }
 
+void MainMenu::startGameTouchEvent(cocos2d::Ref * pSender, ui::Widget::TouchEventType type)
+{
+	switch (type)
+	{
+	case ui::Widget::TouchEventType::BEGAN:
+		break;
+
+	case ui::Widget::TouchEventType::ENDED:
+		initiateNewGame(saveFile);
+		break;
+
+	default:
+		break;
+	}
+}
+
 void MainMenu::selectedItemEvent(cocos2d::Ref * pSender, ui::ListView::EventType type)
 {
 	switch (type)
@@ -207,10 +229,10 @@ void MainMenu::textFieldEvent(cocos2d::Ref * pSender, ui::TextField::EventType t
 	switch (type)
 	{
 	case ui::TextField::EventType::ATTACH_WITH_IME:
-		std::cout << "start" << std::endl;
 		break;
 	case ui::TextField::EventType::DETACH_WITH_IME:
-		initiateNewGame(textf_->getString());
+		saveFile = textf_->getString();
+		startGameButton->setVisible(true);
 		break;
 	case ui::TextField::EventType::INSERT_TEXT:
 		break;
@@ -238,7 +260,7 @@ void MainMenu::initiateNewGame(string tmp)
 
 	*/
 	file.open("Saves/" + tmp + ".txt");
-	file << "4" << endl;
+	file << "1" << endl;
 	file << "1" << endl;
 	file << "1" << endl;
 	file << "1" << endl;

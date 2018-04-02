@@ -46,12 +46,12 @@ bool CPlayer::init(const std::string & fileName)
 	this->setTag(PLAYER_TAG);
 	this->setPhysicsBody(cbody);
 
-	hspeed = 70;
-	vspeed = 70;
+	speed = 70;
 	sprintDuration = 0.f;
 	cWeapNum = 0;
 	isMoving = false;
 	isSprinting = false;
+	hasPistol = false;
 	health = MAX_PLAYER_HEALTH;
 
 	initAnimations();
@@ -191,7 +191,35 @@ void CPlayer::initAnimations()
 
 void CPlayer::handleInput()
 {
+	if (INPUTS->getKeyPress(KeyCode::KEY_1) && weapons.size() >= 1 && cWeapNum != 0)
+	{
+		weapons[cWeapNum]->setVisible(false);
+		weapons[cWeapNum]->unscheduleUpdate();
+		cWeapNum = 0;
+		weapons[cWeapNum]->setVisible(true);
+		weapons[cWeapNum]->scheduleUpdate();
+		weapons[cWeapNum]->displayEquip();
+	}
+	else if (INPUTS->getKeyPress(KeyCode::KEY_2) && weapons.size() >= 2 && cWeapNum != 1)
+	{
+		weapons[cWeapNum]->setVisible(false);
+		weapons[cWeapNum]->unscheduleUpdate();
+		cWeapNum = 1;
+		weapons[cWeapNum]->setVisible(true);
+		weapons[cWeapNum]->scheduleUpdate();
+		weapons[cWeapNum]->displayEquip();
+	}
+	else if (INPUTS->getKeyPress(KeyCode::KEY_3) && weapons.size() >= 3 && cWeapNum != 2)
+	{
+		weapons[cWeapNum]->setVisible(false);
+		weapons[cWeapNum]->unscheduleUpdate();
+		cWeapNum = 2;
+		weapons[cWeapNum]->setVisible(true);
+		weapons[cWeapNum]->scheduleUpdate();
+		weapons[cWeapNum]->displayEquip();
+	}
 }
+
 
 void CPlayer::handleMovement(float dt)
 {
@@ -228,8 +256,7 @@ void CPlayer::handleMovement(float dt)
 	if (isSprinting)
 	{
 		this->getPhysicsBody()->setVelocityLimit(VELOCITYLIMIT * 2);
-		hspeed = 120;
-		vspeed = 120;
+		speed = 120;
 		sprintDuration += dt;
 		if (sprintDuration >= 0.5f)
 		{
@@ -238,29 +265,28 @@ void CPlayer::handleMovement(float dt)
 	}
 	else
 	{
-		hspeed = 70;
-		vspeed = 70;
+		speed = 70;
 		this->getPhysicsBody()->setVelocityLimit(VELOCITYLIMIT);
 	}
 	velocity = Vec2(0, 0);
 	if (INPUTS->getKey(KeyCode::KEY_A))
 	{
-		velocity += Vec2(-1, 0) * hspeed;
+		velocity += Vec2(-1, 0) * speed;
 		velNorm += Vec2(-1, 0);
 	}
 	if (INPUTS->getKey(KeyCode::KEY_D))
 	{
-		velocity += Vec2(1, 0) * hspeed;
+		velocity += Vec2(1, 0) * speed;
 		velNorm += Vec2(1, 0);
 	}
 	if (INPUTS->getKey(KeyCode::KEY_W))
 	{
-		velocity += Vec2(0, 1) * vspeed;
+		velocity += Vec2(0, 1) * speed;
 		velNorm += Vec2(0, 1);
 	}
 	if (INPUTS->getKey(KeyCode::KEY_S))
 	{
-		velocity += Vec2(0, -1) * vspeed;
+		velocity += Vec2(0, -1) * speed;
 		velNorm += Vec2(0, -1);
 	}
 	Vec2 nextVelocity = velocity;
@@ -399,6 +425,7 @@ void CPlayer::updateAnimation(float dt)
 void CPlayer::update(float dt)
 {
 	handleMovement(dt);
+	handleInput();
 	updateCamera(dt);
 	updateAnimation(dt);
 	auto p = this->getPosition() - Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f);
@@ -407,6 +434,21 @@ void CPlayer::update(float dt)
 }
 bool CPlayer::onContactBegin(PhysicsContact & contact)
 {
+	auto nodeA = contact.getShapeA()->getBody()->getNode();
+	auto nodeB = contact.getShapeB()->getBody()->getNode();
+	if (nodeA && nodeB)
+	{
+		if (nodeA->getPhysicsBody()->getTag() == HEART_TAG && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
+		{
+			nodeA->runAction(RemoveSelf::create());
+			heal();
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == HEART_TAG && nodeA->getPhysicsBody()->getTag() == PLAYER_TAG)
+		{
+			nodeB->runAction(RemoveSelf::create());
+			heal();
+		}
+	}
 	return true;
 }
 
@@ -428,10 +470,24 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 				else
 					weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
 
+				if (weapons.size() == 0)
+				{
+					cWeapNum = 0;
+					weapon->displayEquip();
+					weapons.push_back(weapon);
+				}
+				else
+				{
+					weapons[cWeapNum]->setVisible(false);
+					weapons[cWeapNum]->unscheduleUpdate();
+					weapon->displayEquip();
+					weapons.push_back(weapon);
+					cWeapNum = weapons.size() - 1;
+				}
+				weapon->setIfPlayer(true);
 				this->addChild(weapon);
-				weapon->displayEquip();
-				weapons.push_back(weapon);
 				nodeA->runAction(RemoveSelf::create());
+				INPUTS->clearForNextFrame();
 				return true;
 			}
 			else
@@ -444,11 +500,25 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 				else
 					weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
 
+				if (weapons.size() == 0)
+				{
+					cWeapNum = 0;
+					weapon->displayEquip();
+					weapons.push_back(weapon);
+				}
+				else
+				{
+					weapons[cWeapNum]->setVisible(false);
+					weapons[cWeapNum]->unscheduleUpdate();
+					weapon->displayEquip();
+					weapons.push_back(weapon);
+					cWeapNum = weapons.size() - 1;
+				}
 				weapon->setIfPlayer(true);
 				this->addChild(weapon);
-				weapon->displayEquip();
-				weapons.push_back(weapon);
+
 				nodeB->runAction(RemoveSelf::create());
+				INPUTS->clearForNextFrame();
 				return true;
 			}
 		}
@@ -476,6 +546,18 @@ void CPlayer::damage()
 		this->runAction(dying);
 		this->unscheduleUpdate();
 		EventCustom event("gameOver");
+		_eventDispatcher->dispatchEvent(&event);
+	}
+}
+
+void CPlayer::heal()
+{
+	if (health <= 20)
+	{
+		this->health++;
+		float* tmp = &(this->health);
+		EventCustom event("health");
+		event.setUserData((void*)&(this->health));
 		_eventDispatcher->dispatchEvent(&event);
 	}
 }

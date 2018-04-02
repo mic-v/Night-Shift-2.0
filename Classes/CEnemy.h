@@ -3,9 +3,6 @@
 
 #include "Character.h"
 #include "CPlayer.h"
-#include <string>
-using std::string;
-using std::stringstream;
 
 class CEnemy : public Character
 {
@@ -16,8 +13,8 @@ public:
 
 	void setSpawn(Vec2 &);
 	void update(float);
-	void updateMovement();
-	void updateAnimation();
+	void handleMovement(float);
+	void updateAnimation(float);
 	//MOOD for the A.I.
 	void exitSpawn(float);
 	void attackPlayer(float);
@@ -33,7 +30,6 @@ private:
 	//Physics/Movement
 	bool accelL; bool accelR;
 	bool accelU; bool accelD;
-	float speed;
 	
 	float movementTimer;
 	//A.I. variables

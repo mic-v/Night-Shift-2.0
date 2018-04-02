@@ -27,16 +27,16 @@ public:
 	bool onContactSeparate(PhysicsContact &);
 
 	void damage();
+	void heal();
 
 
 private:
-	float hspeed;
-	float vspeed;
 	float sprintDuration;
 	SpriteFrame* idleFrameL;
 	Sprite* border;
 	Sprite* bar;
 	ProgressTimer* dashBar;
+	bool hasPistol;
 };
 
 #endif // !_CPLAYER_H_

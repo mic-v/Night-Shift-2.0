@@ -3,6 +3,7 @@
 #include "DisplayHandler.h"
 #include "GameCamera.h"
 #include "GameOverScene.h"
+#include "VictoryScene.h"
 #include "audio/include/AudioEngine.h"
 using namespace cocos2d::experimental;
 using namespace cocos2d;
@@ -64,7 +65,18 @@ bool GameScene::init()
 		Director::getInstance()->pushScene(transition);
 		AudioEngine::stopAll();
 	});
+
+	auto finishShiftListener = EventListenerCustom::create("finishShift", [=](EventCustom* event) {
+		Scene *scene = VictoryScene::createScene();
+		TransitionFade *transition = TransitionFade::create(3.f, scene);
+		Director::getInstance()->pushScene(transition);
+		AudioEngine::stopAll();
+	});
+
+
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(gameOverListener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(finishShiftListener, this);
+
 
 	AudioEngine::play2d("Sounds/Music/OnlyYou.mp3", true, 0.05f);
 

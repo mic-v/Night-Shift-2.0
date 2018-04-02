@@ -6,6 +6,7 @@
 #include "Item.h"
 #include "CPlayer.h"
 #include "CEnemy.h"
+#include <string>
 using namespace cocos2d;
 
 class GameLayer : public cocos2d::Layer
@@ -16,9 +17,7 @@ public:
 	//static cocos2d::Scene* createScene();
 
 	virtual bool init();
-	static void setSaveFile(string);
-
-
+	static void setSaveFile(std::string);
 	void update(float dt);
 	void startRound();
 	void endRound();
@@ -49,7 +48,7 @@ private:
 	CPlayer* cplayer;
 	CEnemy* enmy;
 	TMXTiledMap* map;
-	static string saveFile;
+	static std::string saveFile;
 
 
 	std::vector<Sprite*> tiles;
@@ -75,4 +74,4 @@ private:
 	std::vector<CEnemy*> enemyList;
 };
 
-#endif // __HELLOWORLD_SCENE_H__
+#endif 

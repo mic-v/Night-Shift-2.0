@@ -1,12 +1,16 @@
 #include "CEnemy.h"
 #include "Definitions.h"
+#include "Item.h"
+#include <string>
+using std::string;
+using std::stringstream;
 bool CEnemy::init()
 {
 	if (!Sprite::init())
 	{
 		return false;
 	}
-	this->setTexture("e-idleR.png");
+	this->setTexture("CharacterAnimations/Enemy/original_right.png");
 
 	initAnimations();
 
@@ -109,54 +113,92 @@ void CEnemy::update(float dt)
 	{
 		attackPlayer(dt);
 	}
-	updateMovement();
-	updateAnimation();
+	handleMovement(dt);
+	updateAnimation(dt);
 
 	auto p = this->getPosition() - Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f);
 	p = CC_POINT_POINTS_TO_PIXELS(p);
 	this->setLocalZOrder(-((p.y + 64) / 64));
 }
 
-void CEnemy::updateMovement()
+void CEnemy::handleMovement(float dt)
 {
-	isMoving = true;
-	velocity = Vec2(0, 0);
-	if (accelL)
-		velocity += Vec2(-1, 0) * speed;
-	if (accelR)
-		velocity += Vec2(1, 0) * speed;
-	if (accelD)
-		velocity += Vec2(0, -1) * speed;
-	if (accelU)
-		velocity += Vec2(0, 1) * speed;
-	if (velocity.x == 0 && velocity.y == 0)
+	//isMoving = true;
+	//velocity = Vec2(0, 0);
+	//if (accelL)
+	//	velocity += Vec2(-1, 0) * speed;
+	//if (accelR)
+	//	velocity += Vec2(1, 0) * speed;
+	//if (accelD)
+	//	velocity += Vec2(0, -1) * speed;
+	//if (accelU)
+	//	velocity += Vec2(0, 1) * speed;
+	//if (velocity.x == 0 && velocity.y == 0)
+	//{
+	//	isMoving = false;
+	//}
+
+	//if (!isMoving)
+	//{
+	//	this->getPhysicsBody()->setVelocity(Vec2(0,0));
+	//}
+	//else
+	//{
+	//	this->getPhysicsBody()->setVelocity(this->getPhysicsBody()->getVelocity() + velocity);
+	//
+	isMoving = false;
+	if (accelU || accelL || accelR || accelD)
 	{
-		isMoving = false;
+		isMoving = true;
 	}
 
-	if (!isMoving)
+	velocity = Vec2(0, 0);
+	if (accelL)
 	{
-		this->getPhysicsBody()->setVelocity(Vec2(0,0));
+		velocity += Vec2(-1, 0) * speed;
+	}
+	if (accelR)
+	{
+		velocity += Vec2(1, 0) * speed;
+		velNorm += Vec2(1, 0);
+	}
+	if (accelU)
+	{
+		velocity += Vec2(0, 1) * speed;
+		velNorm += Vec2(0, 1);
+	}
+	if (accelD)
+	{
+		velocity += Vec2(0, -1) * speed;
+		velNorm += Vec2(0, -1);
+	}
+
+	Vec2 nextVelocity = velocity;
+	if (isMoving)
+	{
+		this->getPhysicsBody()->setVelocity(this->getPhysicsBody()->getVelocity() + nextVelocity);
 	}
 	else
 	{
-		this->getPhysicsBody()->setVelocity(this->getPhysicsBody()->getVelocity() + velocity);
+		this->getPhysicsBody()->setVelocity(Vec2(0, 0));
 	}
+
 	if (mood == 1)
 	{
 		accelL = accelR = accelU = accelD = false;
 	}
 }
 
-void CEnemy::updateAnimation()
+void CEnemy::updateAnimation(float dt)
 {
+	Vec2 rotVec;
+	float rot_ = 0;
 	if (mood == ENEMYATTACK)
 	{
-		Vec2 rotVec;
 		if (player_ != nullptr)
 		{
-			rotVec = player_->getPosition() - this->getPosition();
-			float rot_ = Vec2::angle(Vec2(0, 1), rotVec.getNormalized()) * (180.f / M_PI) - 90.f;
+			rotVec = rotVec = player_->getPosition() - this->getPosition();
+			rot_ = Vec2::angle(Vec2(0, 1), rotVec.getNormalized()) * (180.f / M_PI) - 90.f;
 			if (rotVec.x < 0)
 			{
 				rot_ = 360 - rot_;
@@ -169,6 +211,87 @@ void CEnemy::updateAnimation()
 			weapons[cWeapNum]->setRotation(rot_);
 		}
 	}
+
+	faceLeft_ = false;
+	faceRight_ = false;
+	faceUp_ = false;
+	faceDown_ = false;
+
+
+	if (rot_ >= -45 && rot_ < 45)
+		faceRight_ = true;
+	else if (rot_ >= 45 && rot_ < 315)
+		faceDown_ = true;
+	else if (rot_ >= 315 && rot_ < 405)
+		faceLeft_ = true;
+	else
+		faceUp_ = true;
+	//Determine if the character is facing left, right, up or down. It is very important for the animation
+	if (faceLeft_)
+		orientation_ = FACELEFT;
+	else if (faceRight_)
+		orientation_ = FACERIGHT;
+	else if (faceDown_)
+		orientation_ = FACEDOWN;
+	else
+		orientation_ = FACEUP;
+
+	if (weapons.size() != 0)
+	{
+		if (cOrientation_ == FACEUP)
+			weapons[cWeapNum]->setLocalZOrder(-1000);
+		else
+			weapons[cWeapNum]->setLocalZOrder(1000);
+	}
+
+	//if (cOrientation_ != orientation_)
+	//{
+	//	cOrientation_ = orientation_;
+	//	string tmp = "CharacterAnimations/Enemy/Walking/" + cOrientation_ + "/idle.png";
+	//	//std::cout << tmp << std::endl;
+	//	this->setTexture(tmp);
+	//}
+
+	if (isMoving)
+	{
+		//CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sounds/Character/Walking.wav", false);
+		animationTimer += dt;
+		if (animationTimer >= 0.09f * animationCounter)
+			animationCounter++;
+		if (animationCounter >= 8)
+		{
+			animationCounter = 1;
+			animationTimer = 0.0f;
+		}
+
+		if (currentACounter != animationCounter)
+		{
+			currentACounter = animationCounter;
+			if (cOrientation_ != orientation_)
+			{
+				cOrientation_ = orientation_;
+			}
+			string tmp = "CharacterAnimations/Enemy/Walking/" + cOrientation_ + "/frame" + std::to_string(animationCounter) + ".png";
+			/*std::cout << tmp << std::endl;*/
+			this->setTexture(tmp);
+		}
+	}
+	else
+	{
+		animationTimer = 0.f;
+		currentACounter = 1;
+		animationCounter = 1;
+		if (cOrientation_ != orientation_)
+		{
+			cOrientation_ = orientation_;
+		}
+		string tmp = "CharacterAnimations/Enemy/Walking/" + cOrientation_ + "/idle.png";
+		//std::cout << tmp << std::endl;
+		this->setTexture(tmp);
+	}
+
+
+
 }
 
 void CEnemy::exitSpawn(float dt)
@@ -308,17 +431,24 @@ void CEnemy::damageEnemy()
 void CEnemy::removeEnemy()
 {
 	//Stop enemy's state 
+	Vec2 itemPos = this->getPosition();
+
 	mood = 5;
 	weapons[cWeapNum]->setVisible(false);
 	this->getPhysicsBody()->setVelocity(Vec2(0, 0));
 	this->getPhysicsBody()->setVelocityLimit(0);
 	this->getPhysicsBody()->removeFromWorld();
+	this->unscheduleUpdate();
 	if (!dyingAnim)
 	{
 		dyingAnim = true;
 		this->stopAllActions();
 		dyingSeq = Sequence::create(dying, RemoveSelf::create(), nullptr);
 		this->runAction(dyingSeq);
+
+		EventCustom event2("heartSpawn");
+		//event2.setUserData((void*)&this->getPosition());
+		_eventDispatcher->dispatchEvent(&event2);
 	}
 	else
 	{

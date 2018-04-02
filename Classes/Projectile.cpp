@@ -34,9 +34,10 @@ bool Projectile::init(const std::string & fileName)
 	body->setContactTestBitmask(0xFFFFFFFF);
 	this->setPhysicsBody(body);
 
-	auto contactListene = EventListenerPhysicsContact::create();
-	contactListene->onContactBegin = CC_CALLBACK_1(Projectile::onContactBegin, this);
-	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListene, this);
+	auto contactListener = EventListenerPhysicsContact::create();
+	contactListener->onContactBegin = CC_CALLBACK_1(Projectile::onContactBegin, this);
+	contactListener->onContactPreSolve = CC_CALLBACK_1(Projectile::onContactPost, this);
+	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
 	return true;
 }
@@ -71,6 +72,7 @@ bool Projectile::onContactBegin(PhysicsContact & contact)
 	if (nodeA && nodeB)
 	{
 		//WALL CHECK
+		std::cout << nodeA->getPhysicsBody()->getTag() << " " << nodeB->getPhysicsBody()->getTag() << std::endl;
 		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == WALL_TAG)
 		{
 			nodeA->runAction(RemoveSelf::create());
@@ -113,24 +115,52 @@ bool Projectile::onContactBegin(PhysicsContact & contact)
 
 		if (nodeA->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeB->getPhysicsBody()->getTag() == ENEMY_TAG)
 		{
-			//nodeA->runAction(RemoveSelf::create());
 			return false;
 		}
 		else if (nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeA->getPhysicsBody()->getTag() == ENEMY_TAG)
 		{
-			//nodeB->runAction(RemoveSelf::create());
+			return false;
+		}
+		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == 7)
+		{
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == 7)
+		{
+			return false;
+		}
+
+	}
+	return true;
+}
+
+bool Projectile::onContactPost(PhysicsContact & contact)
+{
+	auto nodeA = contact.getShapeA()->getBody()->getNode();
+	auto nodeB = contact.getShapeB()->getBody()->getNode();
+	if (nodeA && nodeB)
+	{
+		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == 7)
+		{
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == 7)
+		{
+			return false;
+		}
+		if (nodeA->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeB->getPhysicsBody()->getTag() == 7)
+		{
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeA->getPhysicsBody()->getTag() == 7)
+		{
 			return false;
 		}
 	}
 	return true;
 }
 
-bool Projectile::onContactPost(PhysicsContact &)
-{
-	return true;
-}
-
-bool Projectile::onContactSeparate(PhysicsContact &)
+bool Projectile::onContactSeparate(PhysicsContact & contact)
 {
 	return true;
 }

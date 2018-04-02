@@ -74,6 +74,19 @@ bool GameLayer::init()
 	item->setPosition(Vec2(750, 640));
 	this->addChild(item, 2);
 
+
+	Item* item2 = Item::create("Items/silencedGun.png");
+	item2->setName("handOnGun.png");
+	item2->setPosition(Vec2(890, 640));
+	this->addChild(item2, 2);
+
+	//Item* item3 = Item::create("Items/heart.png");
+	//item3->setName("heart.png");
+	//item3->getPhysicsBody()->setTag(HEART_TAG);
+	//item3->setPosition(Vec2(890, 1640));
+	//this->addChild(item3, 2);
+
+
 	roundStart_ = false;
 	dontmove = false;
 	wallCollision = false;
@@ -84,11 +97,23 @@ bool GameLayer::init()
 	//}
 	this->runAction(CAMERA->getCamera());
 
+
+	auto heartSpawnListener = EventListenerCustom::create("heartSpawn", [=](EventCustom* event) {
+		//Vec2* tmp = static_cast<Vec2*>(event->getUserData());
+		Item* item3 = Item::create("Items/heart.png");
+		item3->setName("heart.png");
+		item3->getPhysicsBody()->setTag(HEART_TAG);
+		//item3->setPosition(cplayer->getPosition() + Vec2(100,0));
+		this->addChild(item3, 2);
+	});
+
+
+
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(GameLayer::onContactBegin, this);
 	//contactListener->onContactPreSolve = CC_CALLBACK_1(GameLayer::onContactPost, this);
 	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
-
+	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(heartSpawnListener, this);
 
 
 	return true;
@@ -103,10 +128,21 @@ void GameLayer::update(float dt)
 {
 	//tile_->setLocalZOrder(tile_->getLocalZOrder() + 1);
 	//std::cout << cplayer->getZOrder() << std::endl;
+	if (INPUTS->getKeyPress(KeyCode::KEY_T))
+	{
+		//Item* item3 = Item::create("Items/heart.png");
+		//item3->setName("heart.png");
+		//item3->getPhysicsBody()->setTag(HEART_TAG);
+		//item3->setPosition(cplayer->getPosition() + Vec2(100,0));
+		//this->addChild(item3, 2);'EventCustom event("health")
+		EventCustom event("heartSpawn");
+		_eventDispatcher->dispatchEvent(&event);
+	}
 	if (!roundStart_)
 	{
 		if (cplayer->getPosition().y > 860)
 		{
+
 			levelTimer += dt;
 			std::string tmp = "12 AM";
 			EventCustom event("timer");
@@ -224,11 +260,19 @@ void GameLayer::update(float dt)
 		{
 			EventCustom event("roundEnd");
 			_eventDispatcher->dispatchEvent(&event);
-			for (int i = 0; i < doorList.size(); i++)
+			if (doorList.size() != 0)
 			{
-				doorList[i]->runAction(RemoveSelf::create());
+				for (int i = 0; i < doorList.size(); i++)
+				{
+					doorList[i]->runAction(RemoveSelf::create());
+				}
+				doorList.clear();
 			}
-			doorList.clear();
+			if (cplayer->getPosition().y < 860)
+			{
+				EventCustom event("finishShift");
+				_eventDispatcher->dispatchEvent(&event);
+			}
 		}
 		else
 		{

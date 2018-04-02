@@ -1,5 +1,5 @@
 #include "Item.h"
-
+#include "Definitions.h"
 Item::Item()
 {
 }
@@ -36,8 +36,8 @@ bool Item::init(const std::string & fileName)
 	body->setVelocityLimit(0);
 	body->setRotationEnable(false);
 	body->setContactTestBitmask(0xFFFFFFFF);
-	//body->setCategoryBitmask(0x02);
-	//body->setCollisionBitmask(0x01);
+	body->setCategoryBitmask(ITEM_CATEGORY);
+	body->setCollisionBitmask(MASK_ITEM);
 	//body->setCategoryBitmask(0x01);
 	//body->setCollisionBitmask(0x02);
 

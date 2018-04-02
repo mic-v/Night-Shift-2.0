@@ -27,7 +27,7 @@ private:
 	Label* label;
 	static Scene* scenehandle;
 	static Layer* layerhandle;
-	static string saveFile;
+	static std::string saveFile;
 };
 
 

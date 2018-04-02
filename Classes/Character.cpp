@@ -13,6 +13,8 @@ Character::Character()
 	animationTimer = 0.f;
 	orientation_ = "r";
 	cOrientation_ = "r";
+	hasAk = false;
+	hasM16 = false;
 }
 
 Character::~Character()
