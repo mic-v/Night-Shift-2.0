@@ -18,6 +18,14 @@ public:
 
 	void menuCloseCallback(cocos2d::Ref* pSender);
 	void menuGameCallback(cocos2d::Ref* pSender);
+	void menuStartCallback(cocos2d::Ref* pSender);
+	void menuSaveCallback(cocos2d::Ref *sender, ui::Text::TouchEventType event);
+	
+	void startTouchEvent(cocos2d::Ref* pSender, ui::Widget::TouchEventType type);
+	void newGameTouchEvent(cocos2d::Ref* pSender, ui::Widget::TouchEventType type);
+	void selectedItemEvent(cocos2d::Ref *pSender, ui::ListView::EventType type);
+	void textFieldEvent(cocos2d::Ref *pSender, ui::TextField::EventType type);
+	void initiateNewGame(string);
 private:
 	void FadeToGame(float dt)
 	{
@@ -25,6 +33,14 @@ private:
 		TransitionFade *transition = TransitionFade::create(0.75f, scene);
 		Director::getInstance()->replaceScene(transition);
 	}
+
+	ui::Button* newGameButton;
+	ui::TextField *textField;
+	Menu* menu;
+	ui::ScrollView *scrollView;
+	Label* saveLabel;
+
+	std::vector<std::string> saveList;
 };
 
 #endif

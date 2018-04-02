@@ -34,13 +34,13 @@ bool GameOverScene::init()
 	Size screenSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	Sprite *title = Sprite::create("splashScreen.png");
+	Sprite *title = Sprite::create("UI/gameOver.png");
 	title->setPosition(Vec2(screenSize.width / 2 + origin.x, screenSize.height * 0.75 + origin.y));
 	this->addChild(title);
 
 	auto closeItem = MenuItemImage::create(
-		"exit.png",
-		"exit_selected.png",
+		"UI/exit.png",
+		"UI/exit(pressed).png",
 		CC_CALLBACK_1(GameOverScene::menuCloseCallback, this));
 
 	if (closeItem == nullptr ||
@@ -57,8 +57,8 @@ bool GameOverScene::init()
 	}
 
 	auto menuItem = MenuItemImage::create(
-		"resumeButton.png",
-		"resumeButton_selected.png",
+		"UI/menu.png",
+		"UI/menu(pressed).png",
 		CC_CALLBACK_1(GameOverScene::menuMenuCallback, this));
 
 	if (menuItem == nullptr ||
@@ -75,8 +75,8 @@ bool GameOverScene::init()
 	}
 
 	auto gameItem = MenuItemImage::create(
-		"startButton.png",
-		"startButton_selected.png",
+		"UI/retry.png",
+		"UI/retry(pressed).png",
 		CC_CALLBACK_1(GameOverScene::menuGameCallback, this));
 
 	if (gameItem == nullptr ||

@@ -5,9 +5,11 @@
 #include "SimpleAudioEngine.h"
 #include "Definitions.h"
 #include "GameCamera.h"
-
+#include <fstream>
 USING_NS_CC;
 using namespace cocos2d;
+
+string GameLayer::saveFile = "";
 
 // Print useful error message instead of segfaulting when files are not there.
 static void problemLoading(const char* filename)
@@ -42,8 +44,20 @@ bool GameLayer::init()
 	enemySpawn3 = Vec2(1728, -320);
 	enemySpawn4 = Vec2(1728, 3776);
 
+	string readLine = "";
+	ifstream read;
+	std::cout << saveFile << std::endl;
+	read.open("Saves/" + saveFile + ".txt");
+	for (int i = 0; getline(read, readLine); i++)
+		if (i == 0)
+		{
+			std::cout << std::stoi(readLine) << std::endl;
+			break;
+		}
+	read.close();
+
 	initLevel();
-	level_ = 1;
+	level_ = std::stoi(readLine);
 	levelTimer = 0.f;
 	spawnLimit = level_ * 4;
 	spawnRate = 0.f;
@@ -78,6 +92,11 @@ bool GameLayer::init()
 
 
 	return true;
+}
+
+void GameLayer::setSaveFile(string saveFile_)
+{
+	saveFile = saveFile_;
 }
 
 void GameLayer::update(float dt)
@@ -124,7 +143,7 @@ void GameLayer::update(float dt)
 			if (spawnRate >= 5.0)
 			{
 				spawnRate = 0;
-				randomSpawn = RandomHelper::random_int(1, 4);
+				randomSpawn = 1;
 				if (randomSpawn == 1)
 				{
 					CEnemy* enemy = CEnemy::create();
@@ -282,6 +301,12 @@ void GameLayer::repositionSprite(float dt)
 
 void GameLayer::initLevel()
 {
+	//SpriteBatchNode* spriteSheet = SpriteBatchNode::create("Tiles/LevelTiles.png");
+	//this->addChild(spriteSheet);
+	//
+	//SpriteFrameCache* spriteFrameCache = SpriteFrameCache::getInstance();
+	//spriteFrameCache->addSpriteFramesWithFile
+
 	auto map = TMXTiledMap::create("level/Arena-1.3.tmx");
 	this->addChild(map,-500,20);
 	auto layerMeta = map->getLayer("LayerMeta");
@@ -406,6 +431,18 @@ void GameLayer::initLevel()
 	map->removeChildByTag(1);
 	map->removeChildByTag(2);
 	map->removeChildByTag(3);
+
+	Sprite* desk = Sprite::create("Tiles/Desk.png");
+	//desk->setScale(3.f);
+	desk->setPosition(640, 640);
+	desk->setLocalZOrder(getObjectZ(desk->getPosition()));
+	this->addChild(desk);
+
+	Sprite* dummy = Sprite::create("Tiles/Dummy_Left.png");
+	dummy->setLocalZOrder(300);
+	dummy->setPosition(1200, 640);
+	
+	this->addChild(dummy);
 }
 
 void GameLayer::findEnemyandHurt(Node* node)
@@ -424,4 +461,10 @@ void GameLayer::findEnemyandHurt(Node* node)
 			return;
 		}
 	}
+}
+
+int GameLayer::getObjectZ(Vec2 pos_)
+{
+	auto p = CC_POINT_POINTS_TO_PIXELS(pos_);
+	return (-((p.y + 64) / 64));
 }

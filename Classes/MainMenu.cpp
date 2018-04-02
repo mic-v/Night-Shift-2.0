@@ -1,5 +1,6 @@
 #include "MainMenu.h"
 #include "GameCamera.h"
+#include <fstream>
 using namespace cocos2d;
 
 cocos2d::Scene* MainMenu::createScene()
@@ -43,41 +44,71 @@ bool MainMenu::init()
 		"exit_selected.png",
 		CC_CALLBACK_1(MainMenu::menuCloseCallback, this));
 
-	if (closeItem == nullptr ||
-		closeItem->getContentSize().width <= 0 ||
-		closeItem->getContentSize().height <= 0)
-	{
-		problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-	}
-	else
-	{
-		float x = screenSize.width / 2 + origin.x;
-		float y =  screenSize.height * 0.4 + origin.y;
-		closeItem->setPosition(Vec2(x, y));
-	}
+	float x = screenSize.width / 2 + origin.x;
+	float y = screenSize.height * 0.4 + origin.y;
+	closeItem->setPosition(Vec2(x, y));
 
 	auto gameItem = MenuItemImage::create(
 		"startButton.png",
 		"startButton_selected.png",
-		CC_CALLBACK_1(MainMenu::menuGameCallback, this));
+		CC_CALLBACK_1(MainMenu::menuStartCallback, this));
 
-	if (gameItem == nullptr ||
-		gameItem->getContentSize().width <= 0 ||
-		gameItem->getContentSize().height <= 0)
-	{
-		problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-	}
-	else
-	{
-		float x = screenSize.width / 2 + origin.x;
-		float y = screenSize.height * 0.5 + origin.y;
-		gameItem->setPosition(Vec2(x, y));
-	}
-	auto menu = Menu::create(gameItem, closeItem, NULL);
+	x = screenSize.width / 2 + origin.x;
+	y = screenSize.height * 0.5 + origin.y;
+	gameItem->setPosition(Vec2(x, y));
+
+	menu = Menu::create(gameItem, closeItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
 
+	newGameButton = ui::Button::create("UI/newGame.png", "UI/newGame(selected).png");
+	newGameButton->setPosition(Vec2(screenSize.width / 2 + origin.x, screenSize.height / 2 + origin.y));
+	this->addChild(newGameButton);
+	newGameButton->setVisible(false);
+	newGameButton->addTouchEventListener(CC_CALLBACK_2(MainMenu::newGameTouchEvent, this));
 
+
+	saveLabel = Label::createWithTTF("Saves", "fonts/double_pixel-7.ttf", 48);
+	saveLabel->setPosition(Vec2(screenSize.width / 2 + origin.x, screenSize.height / 2 + origin.y - 115));
+	saveLabel->setColor(Color3B(0, 55, 255));
+	this->addChild(saveLabel);
+	saveLabel->setVisible(false);
+
+	textField = ui::TextField::create("Input text here", "fonts/double_pixel-7.ttf", 48);
+	textField->setPosition(Vec2(screenSize.width / 2 + origin.x, screenSize.height / 2 + origin.y));
+	this->addChild(textField);
+	textField->setVisible(false);
+	textField->setTouchEnabled(true);
+	textField->setMaxLengthEnabled(true);
+	textField->setMaxLength(12);
+	textField->addEventListener(CC_CALLBACK_2(MainMenu::textFieldEvent, this));
+
+	scrollView = ui::ScrollView::create();
+
+	scrollView->setDirection(ui::ScrollView::Direction::VERTICAL);
+	scrollView->setContentSize(Size(700, 400));
+	scrollView->setInnerContainerSize(Size(1280, 2500));
+	scrollView->setBackGroundImage("HelloWorld.png");
+	scrollView->setBounceEnabled(true);
+	scrollView->setAnchorPoint(Vec2(0.5, 0.5));
+	scrollView->setPosition(Vec2(screenSize.width / 2 + origin.x, screenSize.height / 2 + origin.y - 350));
+
+	for (int i = 0; i < 50; i++)
+	{
+
+		auto text = ui::Text::create("Empty", "fonts/double_pixel-7.ttf",32);
+		text->setPosition(Vec2(scrollView->getContentSize().width / 2, i * 50));
+		text->setTouchEnabled(true);
+		text->addTouchEventListener(CC_CALLBACK_2(MainMenu::startTouchEvent, this));
+
+		scrollView->addChild(text);
+	}
+	this->addChild(scrollView);
+	scrollView->setVisible(false);
+	//ui::Button* startButton = ui::Button::create("UI/start.png", "UI/start(selected).png");
+	//startButton->setPosition(Vec2(screenSize.width / 2 + origin.x, screenSize.height / 2 + origin.y - 200));
+	//startButton->addTouchEventListener(CC_CALLBACK_2(MainMenu::startTouchEvent, this));
+	//this->addChild(startButton);
 	return true;
 }
 
@@ -100,6 +131,120 @@ void MainMenu::menuCloseCallback(cocos2d::Ref * pSender)
 
 void MainMenu::menuGameCallback(cocos2d::Ref * pSender)
 {
+	Scene *scene = GameScene::createScene();
+	TransitionFade *transition = TransitionFade::create(2.f, scene);
+	Director::getInstance()->replaceScene(transition);
+	CAMERA->init();
+}
+
+void MainMenu::menuStartCallback(cocos2d::Ref * pSender)
+{
+	menu->setVisible(false);
+	scrollView->setVisible(true);
+	newGameButton->setVisible(true);
+	saveLabel->setVisible(true);
+}
+
+void MainMenu::menuSaveCallback(cocos2d::Ref * pSender, ui::Text::TouchEventType event)
+{
+	std::cout << "touch " << std::endl;
+}
+
+void MainMenu::startTouchEvent(cocos2d::Ref * pSender, ui::Widget::TouchEventType type)
+{
+	switch (type)
+	{
+	case ui::Widget::TouchEventType::BEGAN:
+		// code to handle when the button is first clicked
+		break;
+
+	case ui::Widget::TouchEventType::ENDED:
+
+		break;
+
+	default:
+		std::cout << "daniel1" << std::endl;
+		break;
+	}
+}
+
+void MainMenu::newGameTouchEvent(cocos2d::Ref * pSender, ui::Widget::TouchEventType type)
+{
+	switch (type)
+	{
+	case ui::Widget::TouchEventType::BEGAN:
+		break;
+
+	case ui::Widget::TouchEventType::ENDED:
+		newGameButton->setVisible(false);
+		textField->setVisible(true);
+		break;
+
+	default:
+		break;
+	}
+
+}
+
+void MainMenu::selectedItemEvent(cocos2d::Ref * pSender, ui::ListView::EventType type)
+{
+	switch (type)
+	{
+	case ui::ListView::EventType::ON_SELECTED_ITEM_START:
+		log("selected child end index =");
+		break;
+	case ui::ListView::EventType::ON_SELECTED_ITEM_END:
+		log("selected child end index =");
+		break;
+	default:
+		break;
+	}
+}
+
+void MainMenu::textFieldEvent(cocos2d::Ref * pSender, ui::TextField::EventType type)
+{
+	ui::TextField* textf_ = dynamic_cast<ui::TextField *>(pSender);
+	switch (type)
+	{
+	case ui::TextField::EventType::ATTACH_WITH_IME:
+		std::cout << "start" << std::endl;
+		break;
+	case ui::TextField::EventType::DETACH_WITH_IME:
+		initiateNewGame(textf_->getString());
+		break;
+	case ui::TextField::EventType::INSERT_TEXT:
+		break;
+	case ui::TextField::EventType::DELETE_BACKWARD:
+		break;
+	default:
+		break;
+	}
+}
+
+void MainMenu::initiateNewGame(string tmp)
+{
+	std::ofstream file;
+	file.open("Listofsaves.txt", ios::app);
+	file << tmp << endl;
+	file.close();
+
+	//NEW SAVE INITIALIZE
+	/*
+	Format
+	Level 
+	Reload Speed
+	Health
+	Dash
+
+	*/
+	file.open("Saves/" + tmp + ".txt");
+	file << "4" << endl;
+	file << "1" << endl;
+	file << "1" << endl;
+	file << "1" << endl;
+	file.close();
+
+	GameLayer::setSaveFile(tmp);
 	Scene *scene = GameScene::createScene();
 	TransitionFade *transition = TransitionFade::create(2.f, scene);
 	Director::getInstance()->replaceScene(transition);

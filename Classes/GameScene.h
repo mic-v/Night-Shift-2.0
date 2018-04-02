@@ -16,20 +16,18 @@ public:
     
 	void update(float dt);
 
-	bool onContactBegin(PhysicsContact & contact);
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
 
 	Camera* sceneCamera;
 	Follow* sceneFollow;
-	//GameScene* glayer;
 private:
 	Sprite* spr;
-	Player* h;
 	DrawNode* node;
 	Label* label;
 	static Scene* scenehandle;
 	static Layer* layerhandle;
+	static string saveFile;
 };
 
 

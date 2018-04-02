@@ -2,12 +2,10 @@
 #define _GAMELAYER_H_
 
 #include "cocos2d.h"
-#include "Player.h"
 #include "Entity.h"
 #include "Item.h"
 #include "CPlayer.h"
 #include "CEnemy.h"
-#include "Enemy.h"
 using namespace cocos2d;
 
 class GameLayer : public cocos2d::Layer
@@ -18,6 +16,8 @@ public:
 	//static cocos2d::Scene* createScene();
 
 	virtual bool init();
+	static void setSaveFile(string);
+
 
 	void update(float dt);
 	void startRound();
@@ -30,6 +30,8 @@ public:
 	void menuCloseCallback(cocos2d::Ref* pSender);
 
 	void repositionSprite(float);
+
+
 	Camera* sceneCamera;
 	Follow* sceneFollow;
 	bool dontmove;
@@ -37,7 +39,7 @@ public:
 private:
 	void initLevel();
 	void findEnemyandHurt(Node* node);
-
+	int getObjectZ(Vec2);
 
 	Vec2 velocity;
 	Vec2 previousPos;
@@ -47,6 +49,7 @@ private:
 	CPlayer* cplayer;
 	CEnemy* enmy;
 	TMXTiledMap* map;
+	static string saveFile;
 
 
 	std::vector<Sprite*> tiles;
