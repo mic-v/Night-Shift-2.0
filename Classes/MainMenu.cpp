@@ -146,10 +146,10 @@ void MainMenu::menuGameCallback(cocos2d::Ref * pSender)
 
 void MainMenu::menuStartCallback(cocos2d::Ref * pSender)
 {
-	menu->setVisible(false);
-	scrollView->setVisible(true);
-	newGameButton->setVisible(true);
-	saveLabel->setVisible(true);
+	Scene *scene = GameScene::createScene();
+	TransitionFade *transition = TransitionFade::create(2.f, scene);
+	Director::getInstance()->replaceScene(transition);
+	CAMERA->init();
 }
 
 void MainMenu::menuSaveCallback(cocos2d::Ref * pSender, ui::Text::TouchEventType event)
@@ -169,7 +169,6 @@ void MainMenu::startTouchEvent(cocos2d::Ref * pSender, ui::Widget::TouchEventTyp
 		break;
 
 	default:
-		std::cout << "daniel1" << std::endl;
 		break;
 	}
 }
@@ -245,28 +244,24 @@ void MainMenu::textFieldEvent(cocos2d::Ref * pSender, ui::TextField::EventType t
 
 void MainMenu::initiateNewGame(string tmp)
 {
-	std::ofstream file;
-	file.open("Listofsaves.txt", ios::app);
-	file << tmp << endl;
-	file.close();
+	//std::ofstream file;
+	//file.open("Listofsaves.txt", ios::app);
+	//file << tmp << endl;
+	//file.close();
 
-	//NEW SAVE INITIALIZE
-	/*
-	Format
-	Level 
-	Reload Speed
-	Health
-	Dash
+	////NEW SAVE INITIALIZE
+	///*
+	//Format
+	//Level 
+	//Score
 
-	*/
-	file.open("Saves/" + tmp + ".txt");
-	file << "1" << endl;
-	file << "1" << endl;
-	file << "1" << endl;
-	file << "1" << endl;
-	file.close();
+	//*/
+	//file.open("Saves/" + tmp + ".txt");
+	//file << "1" << endl;
+	//file << "0" << endl;
+	//file.close();
 
-	GameLayer::setSaveFile(tmp);
+	//GameLayer::setSaveFile(tmp);
 	Scene *scene = GameScene::createScene();
 	TransitionFade *transition = TransitionFade::create(2.f, scene);
 	Director::getInstance()->replaceScene(transition);

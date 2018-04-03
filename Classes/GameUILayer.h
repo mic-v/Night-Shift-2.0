@@ -20,6 +20,7 @@ public:
 	//void update(float dt);
 	// a selector callback
 	//void menuCloseCallback(cocos2d::Ref* pSender);
+	static int score_;
 private:
 	Label* label;
 	Label* time;

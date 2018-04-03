@@ -19,8 +19,9 @@ public:
 	virtual bool init();
 	static void setSaveFile(std::string);
 	void update(float dt);
-	void startRound();
-	void endRound();
+	void createHeart(Vec2 &);
+	void createAK(Vec2 &);
+	void createAmmo(Vec2 &);
 	// a selector callback
 	//Contact after checking if two shapes still
 	bool onContactBegin(PhysicsContact & contact);
@@ -35,6 +36,7 @@ public:
 	Follow* sceneFollow;
 	bool dontmove;
 	bool wallCollision;
+	static int level_;
 private:
 	void initLevel();
 	void findEnemyandHurt(Node* node);
@@ -60,7 +62,12 @@ private:
 	float spawnRate;
 	float spawnLimit;
 	float levelTimer;
-	int level_;
+	bool spawnHeart;
+	Vec2 spawnHeartPos;
+	bool spawnAK;
+	Vec2 spawnAKPos;
+	bool spawnAmmo;
+	Vec2 spawnAmmoPos;
 		//ENEMY POSITIONS
 	int randomSpawn;
 	int randomWeapon;

@@ -4,6 +4,8 @@
 USING_NS_CC;
 using namespace cocos2d;
 
+int GameUILayer::score_ = 0;
+
 static void problemLoading(const char* filename)
 {
 	printf("Error while loading: %s\n", filename);
@@ -41,10 +43,15 @@ bool GameUILayer::init()
 	}
 	label->setVisible(false);
 
-	time = Label::createWithTTF("0:00", "fonts/double_pixel-7.ttf", 43);
+	time = Label::createWithTTF("12AM", "fonts/double_pixel-7.ttf", 43);
 	time->setPosition(phone->getContentSize().width / 2 + 5, phone->getContentSize().height / 2);
 	time->setColor(Color3B(255.f, 139.f, 94.f));
 	phone->addChild(time);
+
+	Label* score = Label::createWithTTF("0", "fonts/double_pixel-7.ttf", 23);
+	score->setPosition(phone->getContentSize().width / 2 + 5, phone->getContentSize().height / 2 - 30);
+	score->setColor(Color3B(0, 0, 0));
+	phone->addChild(score);
 
 	currentWeapon = Label::createWithTTF("Barehands", "fonts/double_pixel-7.ttf", 64);
 	currentWeapon->setPosition(Vec2(vorigin.x + vsize.width - 200, vorigin.y + 100));
@@ -75,6 +82,11 @@ bool GameUILayer::init()
 	this->addChild(roundStart);
 	roundStart->runAction(Hide::create());
 
+	Label* reloadLabel = Label::createWithTTF("Out of Ammo. Press 'R' to Reload", "fonts/double_pixel-7.ttf", 32);
+	reloadLabel->setPosition(Vec2(vorigin.x + vsize.width / 2, vorigin.y + vsize.height / 2 - 200));
+	this->addChild(reloadLabel);
+	reloadLabel->runAction(Hide::create());
+
 	roundEnd = Label::createWithTTF("RETURN TO YOUR OFFICE", "fonts/double_pixel-7.ttf", 64);
 	roundEnd->setPosition(Vec2(vorigin.x + vsize.width / 2, vorigin.y + vsize.height - 400));
 	this->addChild(roundEnd);
@@ -83,8 +95,12 @@ bool GameUILayer::init()
 	auto roundStartListener = EventListenerCustom::create("roundStart", [=](EventCustom* event) {
 		auto sequence = Sequence::create(Show::create(), DelayTime::create(1.f), Hide::create(), NULL);
 		roundStart->runAction(sequence);
-		//hpBar->runAction(ProgressFromTo::create(1.f, 0.0f, 100.0f));
-		
+	});
+
+	auto reloadListener = EventListenerCustom::create("reload", [=](EventCustom* event) {
+		auto sequence = Sequence::create(Show::create(), DelayTime::create(1.f), Hide::create(), NULL);
+		reloadLabel->runAction(sequence);
+
 	});
 
 	auto finishEnemyListener = EventListenerCustom::create("finishEnemy", [=](EventCustom* event) {
@@ -103,6 +119,11 @@ bool GameUILayer::init()
 		char* text = static_cast<char*>(event->getUserData());
 		std::string tmp(text);
 		time->setString(tmp);
+	});
+
+	auto scoreListener = EventListenerCustom::create("score", [=](EventCustom* event) {
+		score_ += 5;
+		score->setString(std::to_string(score_));
 	});
 
 	auto ammoListener = EventListenerCustom::create("ammo", [=](EventCustom* event) {
@@ -129,6 +150,8 @@ bool GameUILayer::init()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(timerListener, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(healthBarListener, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(finishEnemyListener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(reloadListener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(scoreListener, this);
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(GameUILayer::onContactBegin, this);
 	contactListener->onContactPreSolve = CC_CALLBACK_1(GameUILayer::onContactPost, this);
@@ -147,7 +170,6 @@ bool GameUILayer::onContactBegin(PhysicsContact & contact)
 		if ((nodeA->getPhysicsBody()->getTag() == 7 && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG) || (nodeA->getPhysicsBody()->getTag() == PLAYER_TAG && nodeB->getPhysicsBody()->getTag() == 7))
 		{
 			label->setVisible(true);
-			std::cout << "ASDF" << std::endl;
 		}
 	}
 	return true;

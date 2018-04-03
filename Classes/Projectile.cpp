@@ -39,11 +39,15 @@ bool Projectile::init(const std::string & fileName)
 	contactListener->onContactPreSolve = CC_CALLBACK_1(Projectile::onContactPost, this);
 	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
+	this->scheduleUpdate();
 	return true;
 }
 
 void Projectile::update(float dt)
 {
+	auto p = this->getPosition() - Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f);
+	p = CC_POINT_POINTS_TO_PIXELS(p);
+	this->setLocalZOrder(-((p.y + 64) / 64));
 }
 
 void Projectile::setShot(Vec2 position, Vec2 direction)
@@ -129,6 +133,22 @@ bool Projectile::onContactBegin(PhysicsContact & contact)
 		{
 			return false;
 		}
+		if (nodeA->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeB->getPhysicsBody()->getTag() == HEART_TAG)
+		{
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeA->getPhysicsBody()->getTag() == HEART_TAG)
+		{
+			return false;
+		}
+		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == 14)
+		{
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == 14)
+		{
+			return false;
+		}
 
 	}
 	return true;
@@ -153,6 +173,23 @@ bool Projectile::onContactPost(PhysicsContact & contact)
 			return false;
 		}
 		else if (nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeA->getPhysicsBody()->getTag() == 7)
+		{
+			return false;
+		}
+
+		if (nodeA->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeB->getPhysicsBody()->getTag() == HEART_TAG)
+		{
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == ENEMYBULLET_TAG && nodeA->getPhysicsBody()->getTag() == HEART_TAG)
+		{
+			return false;
+		}
+		if (nodeA->getPhysicsBody()->getTag() == BULLET_TAG && nodeB->getPhysicsBody()->getTag() == 14)
+		{
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == BULLET_TAG && nodeA->getPhysicsBody()->getTag() == 14)
 		{
 			return false;
 		}

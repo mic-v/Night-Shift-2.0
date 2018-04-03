@@ -17,13 +17,15 @@ public:
 	virtual void initAnimations();
 	void initPistolAnimations();
 	void initAKAnimation();
-	void initM16Animation();
+	void initZombieAnimation();
 	void setIfPlayer(bool);
 	bool isPistol();
 	void enemyFire(const Vec2 &, const Vec2 &);
 
 	void update(float);
 	void displayEquip();
+
+	void addAmmo();
 
 	virtual bool onContactBegin(PhysicsContact&);
 	virtual bool onContactPost(PhysicsContact&);

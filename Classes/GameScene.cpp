@@ -20,7 +20,7 @@ Scene* GameScene::createScene()
 	scene->addChild(layer);
 	PhysicsWorld* phys = scene->getPhysicsWorld();
 	phys->setGravity(Vec2(0, 0));
-	/*phys->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);*/
+	//phys->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
 	return scene;
 
@@ -78,7 +78,7 @@ bool GameScene::init()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(finishShiftListener, this);
 
 
-	AudioEngine::play2d("Sounds/Music/OnlyYou.mp3", true, 0.05f);
+	AudioEngine::play2d("Sounds/Music/Song_fixed.mp3", true, 0.05f);
 
 	this->scheduleUpdate();
 

@@ -14,7 +14,7 @@ bool CEnemy::init()
 
 	initAnimations();
 
-	PhysicsBody* body = PhysicsBody::createBox(this->getContentSize(), PhysicsMaterial(1.f, 1.f, 1.f));
+	PhysicsBody* body = PhysicsBody::createBox(Size(61, 159), PhysicsMaterial(1.f, 1.f, 1.f));
 	body->setDynamic(true);
 	body->setRotationEnable(false);
 	body->setVelocityLimit(130);
@@ -29,14 +29,26 @@ bool CEnemy::init()
 	accelL = accelR = accelU = accelD = false;
 	pastSpawnGate = false;
 	dyingAnim = false;
+	isZombie = false;
 	health = 4.0f;
 
 	//SETUP WEAPON
-	Weapon* weapon = Weapon::create("silencedGun.png");
-	weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f + 10.f));
-	weapon->setAnchorPoint(Vec2(-0.57f, 0.5f));
+	Weapon* weapon;
+	int random = RandomHelper::random_int(1, 100);
+	if (random <= 25)
+	{
+		weapon = Weapon::create("AK47.png");
+		weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f - 10.f));
+		weapon->setAnchorPoint(Vec2(0.25f, 0.5f));
+		hasAk_ = true;
+	}
+	else
+	{
+		weapon = Weapon::create("handOnGun.png");
+		weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f + 10.f));
+		weapon->setAnchorPoint(Vec2(-0.57f, 0.5f));
+	}
 	weapon->setIfPlayer(false);
-	//weapon->set
 	weapons.push_back(weapon);
 	cWeapNum = 0;
 	weapons[cWeapNum]->setVisible(false);
@@ -62,6 +74,25 @@ void CEnemy::initAnimations()
 {
 	auto spritecache2 = SpriteFrameCache::getInstance();
 	spritecache2->addSpriteFramesWithFile("res/HDR/enemy-dying.plist");
+	//this->stopAction(idleR);
+	//this->getActionByTag()
+	Vector<SpriteFrame*> die;
+	for (int i = 0; i < 7; i++)
+	{
+		stringstream ss;
+		ss << "frame" << i + 1 << ".png";
+		die.pushBack(spritecache2->getSpriteFrameByName(ss.str()));
+	}
+	auto animation = Animation::createWithSpriteFrames(die, 0.09f);
+	dying = Animate::create(animation);
+	dying->setTag(59);
+	dying->retain();
+}
+
+void CEnemy::initZombieAnimations()
+{
+	auto spritecache2 = SpriteFrameCache::getInstance();
+	spritecache2->addSpriteFramesWithFile("res/HDR/zombie-dying.plist");
 	//this->stopAction(idleR);
 	//this->getActionByTag()
 	Vector<SpriteFrame*> die;
@@ -123,29 +154,6 @@ void CEnemy::update(float dt)
 
 void CEnemy::handleMovement(float dt)
 {
-	//isMoving = true;
-	//velocity = Vec2(0, 0);
-	//if (accelL)
-	//	velocity += Vec2(-1, 0) * speed;
-	//if (accelR)
-	//	velocity += Vec2(1, 0) * speed;
-	//if (accelD)
-	//	velocity += Vec2(0, -1) * speed;
-	//if (accelU)
-	//	velocity += Vec2(0, 1) * speed;
-	//if (velocity.x == 0 && velocity.y == 0)
-	//{
-	//	isMoving = false;
-	//}
-
-	//if (!isMoving)
-	//{
-	//	this->getPhysicsBody()->setVelocity(Vec2(0,0));
-	//}
-	//else
-	//{
-	//	this->getPhysicsBody()->setVelocity(this->getPhysicsBody()->getVelocity() + velocity);
-	//
 	isMoving = false;
 	if (accelU || accelL || accelR || accelD)
 	{
@@ -271,7 +279,15 @@ void CEnemy::updateAnimation(float dt)
 			{
 				cOrientation_ = orientation_;
 			}
-			string tmp = "CharacterAnimations/Enemy/Walking/" + cOrientation_ + "/frame" + std::to_string(animationCounter) + ".png";
+			string tmp;
+			if(isZombie)
+			{ 
+				tmp = "CharacterAnimations/Zombie/Walking/" + cOrientation_ + "/frame" + std::to_string(animationCounter) + ".png";
+			}
+			else
+			{
+				tmp = "CharacterAnimations/Enemy/Walking/" + cOrientation_ + "/frame" + std::to_string(animationCounter) + ".png";
+			}
 			/*std::cout << tmp << std::endl;*/
 			this->setTexture(tmp);
 		}
@@ -285,7 +301,16 @@ void CEnemy::updateAnimation(float dt)
 		{
 			cOrientation_ = orientation_;
 		}
-		string tmp = "CharacterAnimations/Enemy/Walking/" + cOrientation_ + "/idle.png";
+		string tmp;
+
+		if (isZombie)
+		{
+			tmp = "CharacterAnimations/Zombie/Walking/" + cOrientation_ + "/idle.png";
+		}
+		else
+		{
+			tmp = "CharacterAnimations/Enemy/Walking/" + cOrientation_ + "/idle.png";
+		}
 		//std::cout << tmp << std::endl;
 		this->setTexture(tmp);
 	}
@@ -317,6 +342,10 @@ void CEnemy::exitSpawn(float dt)
 			accelU = false;
 			accelD = false;
 			weapons[cWeapNum]->setVisible(true);
+			if (isZombie)
+			{
+				weapons[cWeapNum]->getPhysicsBody()->setGroup(-3);
+			}
 		}
 	}
 	else if (spawnGate.x == 896)
@@ -332,6 +361,10 @@ void CEnemy::exitSpawn(float dt)
 			this->getPhysicsBody()->setVelocity(Vec2(0, 0));
 			this->getPhysicsBody()->setGroup(-1);
 			weapons[cWeapNum]->setVisible(true);
+			if (isZombie)
+			{
+				weapons[cWeapNum]->getPhysicsBody()->setGroup(-3);
+			}
 		}
 	}
 	else if (spawnGate.y == 2496)
@@ -349,6 +382,10 @@ void CEnemy::exitSpawn(float dt)
 			accelU = false;
 			accelD = false;
 			weapons[cWeapNum]->setVisible(true);
+			if (isZombie)
+			{
+				weapons[cWeapNum]->getPhysicsBody()->setGroup(-3);
+			}
 
 		}
 	}
@@ -367,6 +404,10 @@ void CEnemy::exitSpawn(float dt)
 			accelU = false;
 			accelD = false;
 			weapons[cWeapNum]->setVisible(true);
+			if (isZombie)
+			{
+				weapons[cWeapNum]->getPhysicsBody()->setGroup(-3);
+			}
 
 		}
 	}
@@ -376,51 +417,93 @@ void CEnemy::exitSpawn(float dt)
 void CEnemy::attackPlayer(float dt)
 {
 	//accelL = true;
-	weapons[cWeapNum]->enemyFire(this->getPosition(), player_->getPosition() - this->getPosition());
-	int randomMove = RandomHelper::random_int(1, 9);
-	movementTimer += dt;
-	if (movementTimer >= 1.f)
+	if (!isZombie)
 	{
-		switch (randomMove) {
-		case 1:
-			accelL = true;
-			break;
-		case 2:
-			accelR = true;
-			break;
-		case 3:
-			accelU = true;
-			break;
-		case 4:
-			accelD = true;
-			break;
-		case 5:
-			accelL = true;
-			accelD = true;
-			break;
-		case 6:
-			accelU = true;
-			accelL = true;
-			break;
-		case 7:
-			accelR = true;
-			accelD = true;
-			break;
-		case 8:
-			accelR = true;
-			accelU = true;
-			break;
-		case 9:
-			accelL = accelR = accelU = accelD = false;
-			break;
+		weapons[cWeapNum]->enemyFire(this->getPosition(), player_->getPosition() - this->getPosition());
+		int randomMove = RandomHelper::random_int(1, 9);
+		movementTimer += dt;
+		if (movementTimer >= 1.f)
+		{
+			switch (randomMove) {
+			case 1:
+				accelL = true;
+				break;
+			case 2:
+				accelR = true;
+				break;
+			case 3:
+				accelU = true;
+				break;
+			case 4:
+				accelD = true;
+				break;
+			case 5:
+				accelL = true;
+				accelD = true;
+				break;
+			case 6:
+				accelU = true;
+				accelL = true;
+				break;
+			case 7:
+				accelR = true;
+				accelD = true;
+				break;
+			case 8:
+				accelR = true;
+				accelU = true;
+				break;
+			case 9:
+				accelL = accelR = accelU = accelD = false;
+				break;
+			}
+			movementTimer = 0.f;
 		}
-		movementTimer = 0.f;
+	}
+	else
+	{
+		accelL = accelR = accelU = accelD = false;
+		if (player_->getPosition().x < this->getPosition().x)
+		{
+			accelL = true;
+		}
+		else
+		{
+			accelR = true;
+		}
+		if (player_->getPosition().y < this->getPosition().y)
+		{
+			accelD = true;
+		}
+		else
+		{
+			accelU = true;
+		}
 	}
 }
 
 void CEnemy::setPlayer(CPlayer & player)
 {
 	player_ = &(player);
+}
+
+void CEnemy::setZombie(bool tmp)
+{
+	isZombie = tmp;
+	initZombieAnimations();
+	weapons[cWeapNum]->runAction(RemoveSelf::create());
+	//weapons.erase(weapons.begin());
+	//weapons.clear();
+	this->getPhysicsBody()->setVelocityLimit(160);
+	Weapon* weapon = Weapon::create("hand.png");
+	weapons.push_back(weapon);
+	this->addChild(weapon);
+	cWeapNum = 1;
+	weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f + 10.f));
+	weapon->setAnchorPoint(Vec2(-0.57f, 0.5f));
+	weapon->setVisible(false);
+	weapon->getPhysicsBody()->setGroup(-3);
+
 }
 
 void CEnemy::damageEnemy()
@@ -446,9 +529,35 @@ void CEnemy::removeEnemy()
 		dyingSeq = Sequence::create(dying, RemoveSelf::create(), nullptr);
 		this->runAction(dyingSeq);
 
-		EventCustom event2("heartSpawn");
-		//event2.setUserData((void*)&this->getPosition());
-		_eventDispatcher->dispatchEvent(&event2);
+
+		if (hasAk_ && !player_->hasAk())
+		{
+			int random = RandomHelper::random_int(1, 100);
+			if (random <= 50)
+			{
+				EventCustom event("akSpawn");
+				event.setUserData((void*)&itemPos);
+				_eventDispatcher->dispatchEvent(&event);
+			}
+		}
+		else
+		{
+			int random = RandomHelper::random_int(1, 100);
+			if (random <= 50)
+			{
+				EventCustom event("heartSpawn");
+				event.setUserData((void*)&itemPos);
+				_eventDispatcher->dispatchEvent(&event);
+			}
+			else
+			{
+				EventCustom event("ammoSpawn");
+				event.setUserData((void*)&itemPos);
+				_eventDispatcher->dispatchEvent(&event);
+			}
+		}
+		EventCustom event("score");
+		_eventDispatcher->dispatchEvent(&event);
 	}
 	else
 	{
@@ -468,6 +577,14 @@ bool CEnemy::onContactBegin(PhysicsContact & contact)
 		else if (nodeB->getPhysicsBody()->getTag() == ENEMY_TAG && nodeA->getPhysicsBody()->getTag() == WALL_TAG)
 		{
 		}
+		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == 14)
+		{
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == ENEMY_TAG && nodeA->getPhysicsBody()->getTag() == 14)
+		{
+			return false;
+		}
 	}
 	return true;
 }
@@ -483,6 +600,14 @@ bool CEnemy::onContactPost(PhysicsContact & contact)
 		}
 		else if (nodeB->getPhysicsBody()->getTag() == ENEMY_TAG && nodeA->getPhysicsBody()->getTag() == WALL_TAG)
 		{
+		}
+		if (nodeA->getPhysicsBody()->getTag() == ENEMY_TAG && nodeB->getPhysicsBody()->getTag() == 14)
+		{
+			return false;
+		}
+		else if (nodeB->getPhysicsBody()->getTag() == ENEMY_TAG && nodeA->getPhysicsBody()->getTag() == 14)
+		{
+			return false;
 		}
 	}
 	return true;

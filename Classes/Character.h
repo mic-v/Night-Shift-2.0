@@ -52,8 +52,8 @@ protected:
 
 	//current weapon equipped
 	unsigned int cWeapNum;
-	bool hasAk;
-	bool hasM16;
+	bool hasAk_;
+	bool hasM16_;
 	//NEW Animation
 	
 	bool faceLeft_;

@@ -38,64 +38,66 @@ bool VictoryScene::init()
 	title->setPosition(Vec2(screenSize.width / 2 + origin.x, screenSize.height * 0.75 + origin.y));
 	this->addChild(title);
 
-	//auto closeItem = MenuItemImage::create(
-	//	"UI/exit.png",
-	//	"UI/exit(pressed).png",
-	//	CC_CALLBACK_1(GameOverScene::menuCloseCallback, this));
+	auto closeItem = MenuItemImage::create(
+		"UI/exit.png",
+		"UI/exit(pressed).png",
+		CC_CALLBACK_1(VictoryScene::menuCloseCallback, this));
 
-	//if (closeItem == nullptr ||
-	//	closeItem->getContentSize().width <= 0 ||
-	//	closeItem->getContentSize().height <= 0)
-	//{
-	//	problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-	//}
-	//else
-	//{
-	//	float x = screenSize.width / 2 + origin.x;
-	//	float y =  screenSize.height * 0.4 + origin.y;
-	//	closeItem->setPosition(Vec2(x, y));
-	//}
+	if (closeItem == nullptr ||
+		closeItem->getContentSize().width <= 0 ||
+		closeItem->getContentSize().height <= 0)
+	{
+		problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
+	}
+	else
+	{
+		float x = screenSize.width / 2 + origin.x;
+		float y =  screenSize.height * 0.4 + origin.y;
+		closeItem->setPosition(Vec2(x, y - 100));
+	}
 
-	//auto menuItem = MenuItemImage::create(
-	//	"UI/menu.png",
-	//	"UI/menu(pressed).png",
-	//	CC_CALLBACK_1(GameOverScene::menuMenuCallback, this));
+	auto menuItem = MenuItemImage::create(
+		"UI/menu.png",
+		"UI/menu(pressed).png",
+		CC_CALLBACK_1(VictoryScene::menuMenuCallback, this));
 
-	//if (menuItem == nullptr ||
-	//	menuItem->getContentSize().width <= 0 ||
-	//	menuItem->getContentSize().height <= 0)
-	//{
-	//	problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-	//}
-	//else
-	//{
-	//	float x = screenSize.width / 2 + origin.x;
-	//	float y = screenSize.height * 0.5 + origin.y;
-	//	menuItem->setPosition(Vec2(x, y));
-	//}
+	if (menuItem == nullptr ||
+		menuItem->getContentSize().width <= 0 ||
+		menuItem->getContentSize().height <= 0)
+	{
+		problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
+	}
+	else
+	{
+		float x = screenSize.width / 2 + origin.x;
+		float y = screenSize.height * 0.5 + origin.y;
+		menuItem->setPosition(Vec2(x, y - 100));
+	}
 
-	//auto gameItem = MenuItemImage::create(
-	//	"UI/retry.png",
-	//	"UI/retry(pressed).png",
-	//	CC_CALLBACK_1(GameOverScene::menuGameCallback, this));
+	auto gameItem = MenuItemImage::create(
+		"UI/nextShift.png",
+		"UI/nextShift(pressed).png",
+		CC_CALLBACK_1(VictoryScene::menuGameCallback, this));
 
-	//if (gameItem == nullptr ||
-	//	gameItem->getContentSize().width <= 0 ||
-	//	gameItem->getContentSize().height <= 0)
-	//{
-	//	problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-	//}
-	//else
-	//{
-	//	float x = screenSize.width / 2 + origin.x;
-	//	float y = screenSize.height * 0.6 + origin.y;
-	//	gameItem->setPosition(Vec2(x, y));
-	//}
-	//auto menu = Menu::create(gameItem, menuItem, closeItem, NULL);
-	//menu->setPosition(Vec2::ZERO);
-	//this->addChild(menu, 1);
+	if (gameItem == nullptr ||
+		gameItem->getContentSize().width <= 0 ||
+		gameItem->getContentSize().height <= 0)
+	{
+		problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
+	}
+	else
+	{
+		float x = screenSize.width / 2 + origin.x;
+		float y = screenSize.height * 0.6 + origin.y;
+		gameItem->setPosition(Vec2(x, y - 100));
+	}
+	auto menu = Menu::create(gameItem, menuItem, closeItem, NULL);
+	menu->setPosition(Vec2::ZERO);
+	this->addChild(menu, 1);
 
-
+	Label* label = Label::createWithTTF("Score: " + to_string(GameUILayer::score_), "fonts/double_pixel-7.ttf", 32);
+	label->setPosition(screenSize.width / 2, screenSize.height / 2 + 100);
+	this->addChild(label);
 	return true;
 }
 
@@ -120,6 +122,7 @@ void VictoryScene::menuGameCallback(cocos2d::Ref * pSender)
 	TransitionFade *transition = TransitionFade::create(2.f, scene);
 	//Director::getInstance()->replaceScene(transition);
 	Director::getInstance()->pushScene(transition);
+	GameLayer::level_++;
 	//CAMERA->init();
 }
 
@@ -128,5 +131,7 @@ void VictoryScene::menuMenuCallback(cocos2d::Ref * pSender)
 	Scene *scene = MainMenu::createScene();
 	TransitionFade *transition = TransitionFade::create(2.f, scene);
 	Director::getInstance()->replaceScene(transition);
+	GameUILayer::score_ = 0;
+	GameLayer::level_ = 1;
 }
 

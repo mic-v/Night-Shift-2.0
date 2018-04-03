@@ -10,6 +10,7 @@ USING_NS_CC;
 using namespace cocos2d;
 
 string GameLayer::saveFile = "";
+int GameLayer::level_ = 1;
 
 // Print useful error message instead of segfaulting when files are not there.
 static void problemLoading(const char* filename)
@@ -27,8 +28,6 @@ bool GameLayer::init()
 	{
 		return false;
 	}
-	//Director::getInstance()->setProjection(Director::Projection::_2D);
-	//Director::getInstance()->setDepthTest(true);
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -44,20 +43,7 @@ bool GameLayer::init()
 	enemySpawn3 = Vec2(1728, -320);
 	enemySpawn4 = Vec2(1728, 3776);
 
-	string readLine = "";
-	ifstream read;
-	std::cout << saveFile << std::endl;
-	read.open("Saves/" + saveFile + ".txt");
-	for (int i = 0; getline(read, readLine); i++)
-		if (i == 0)
-		{
-			std::cout << std::stoi(readLine) << std::endl;
-			break;
-		}
-	read.close();
-
 	initLevel();
-	level_ = std::stoi(readLine);
 	levelTimer = 0.f;
 	spawnLimit = level_ * 4;
 	spawnRate = 0.f;
@@ -69,52 +55,46 @@ bool GameLayer::init()
 	cplayer->setPosition(640, 640);
 	this->addChild(cplayer, 0, PLAYERNAME);
 
-	Item* item = Item::create("AK47NOHANDS.png");
-	item->setName("AK47.png");
-	item->setPosition(Vec2(750, 640));
-	this->addChild(item, 2);
-
-
 	Item* item2 = Item::create("Items/silencedGun.png");
 	item2->setName("handOnGun.png");
 	item2->setPosition(Vec2(890, 640));
 	this->addChild(item2, 2);
 
-	//Item* item3 = Item::create("Items/heart.png");
-	//item3->setName("heart.png");
-	//item3->getPhysicsBody()->setTag(HEART_TAG);
-	//item3->setPosition(Vec2(890, 1640));
-	//this->addChild(item3, 2);
-
-
 	roundStart_ = false;
 	dontmove = false;
 	wallCollision = false;
+	spawnHeart = false;
 	this->scheduleUpdate();
-	//if (this->getChildByName("CAMERATARGET") == nullptr)
-	//{
-	//this->addChild(CAMERA->getCameraTarget(), 0, "CAMERATARGET");
-	//}
+
 	this->runAction(CAMERA->getCamera());
 
 
 	auto heartSpawnListener = EventListenerCustom::create("heartSpawn", [=](EventCustom* event) {
-		//Vec2* tmp = static_cast<Vec2*>(event->getUserData());
-		Item* item3 = Item::create("Items/heart.png");
-		item3->setName("heart.png");
-		item3->getPhysicsBody()->setTag(HEART_TAG);
-		//item3->setPosition(cplayer->getPosition() + Vec2(100,0));
-		this->addChild(item3, 2);
+		Vec2* tmp = static_cast<Vec2*>(event->getUserData());
+		spawnHeartPos = *tmp;
+		spawnHeart = true;
 	});
 
+	auto akSpawnListener = EventListenerCustom::create("akSpawn", [=](EventCustom* event) {
+		Vec2* tmp = static_cast<Vec2*>(event->getUserData());
+		spawnAKPos = *tmp;
+		spawnAK = true;
+	});
+
+
+	auto ammoSpawnListener = EventListenerCustom::create("m16Spawn", [=](EventCustom* event) {
+		Vec2* tmp = static_cast<Vec2*>(event->getUserData());
+		spawnAmmoPos = *tmp;
+		spawnAmmo = true;
+	});
 
 
 	auto contactListener = EventListenerPhysicsContact::create();
 	contactListener->onContactBegin = CC_CALLBACK_1(GameLayer::onContactBegin, this);
-	//contactListener->onContactPreSolve = CC_CALLBACK_1(GameLayer::onContactPost, this);
 	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(heartSpawnListener, this);
-
+	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(akSpawnListener, this);
+	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(ammoSpawnListener, this);
 
 	return true;
 }
@@ -126,21 +106,25 @@ void GameLayer::setSaveFile(string saveFile_)
 
 void GameLayer::update(float dt)
 {
-	//tile_->setLocalZOrder(tile_->getLocalZOrder() + 1);
-	//std::cout << cplayer->getZOrder() << std::endl;
-	if (INPUTS->getKeyPress(KeyCode::KEY_T))
+
+	if (spawnHeart)
 	{
-		//Item* item3 = Item::create("Items/heart.png");
-		//item3->setName("heart.png");
-		//item3->getPhysicsBody()->setTag(HEART_TAG);
-		//item3->setPosition(cplayer->getPosition() + Vec2(100,0));
-		//this->addChild(item3, 2);'EventCustom event("health")
-		EventCustom event("heartSpawn");
-		_eventDispatcher->dispatchEvent(&event);
+		createHeart(spawnHeartPos);
+		spawnHeart = false;
 	}
+	if (spawnAK)
+	{
+		createAK(spawnAKPos);
+		spawnAK = false;
+	}
+	if (spawnAmmo)
+	{
+
+	}
+
 	if (!roundStart_)
 	{
-		if (cplayer->getPosition().y > 860)
+		if (cplayer->getPosition().y > 860 && cplayer->hasPistol())
 		{
 
 			levelTimer += dt;
@@ -173,16 +157,19 @@ void GameLayer::update(float dt)
 	else if (roundStart_ && !roundEnd_)
 	{
 		levelTimer += dt;
-		if (enemyList.size() <= spawnLimit)
+		if (enemyList.size() < spawnLimit)
 		{
 			spawnRate += dt;
-			if (spawnRate >= 5.0)
+			std::cout << level_ << std::endl;
+			if (spawnRate >= 8.0)
 			{
 				spawnRate = 0;
-				randomSpawn = 1;
+				randomSpawn = RandomHelper::random_int(1, 4);
 				if (randomSpawn == 1)
 				{
 					CEnemy* enemy = CEnemy::create();
+					if(level_ % 2 == 0)
+						enemy->setZombie(true);
 					enemy->setPlayer(*cplayer);
 					enemy->setSpawn(enemySpawn1);
 					this->addChild(enemy);
@@ -191,6 +178,8 @@ void GameLayer::update(float dt)
 				else if (randomSpawn == 2)
 				{
 					CEnemy* enemy = CEnemy::create();
+					if (level_ % 2 == 0)
+						enemy->setZombie(true);
 					enemy->setPlayer(*cplayer);
 					enemy->setSpawn(enemySpawn2);
 					this->addChild(enemy);
@@ -199,6 +188,8 @@ void GameLayer::update(float dt)
 				else if (randomSpawn == 3)
 				{
 					CEnemy* enemy = CEnemy::create();
+					if (level_ % 2 == 0)
+						enemy->setZombie(true);
 					enemy->setPlayer(*cplayer);
 					enemy->setSpawn(enemySpawn3);
 					this->addChild(enemy);
@@ -207,6 +198,8 @@ void GameLayer::update(float dt)
 				else if (randomSpawn == 4)
 				{
 					CEnemy* enemy = CEnemy::create();
+					if (level_ % 2 == 0)
+						enemy->setZombie(true);
 					enemy->setPlayer(*cplayer);
 					enemy->setSpawn(enemySpawn4);
 					this->addChild(enemy);
@@ -282,6 +275,36 @@ void GameLayer::update(float dt)
 
 	}
 
+}
+
+void GameLayer::createHeart(Vec2 & pos_)
+{
+	Item* item = Item::create("Items/heart.png");
+	item->setName("heart.png");
+	item->getPhysicsBody()->setTag(HEART_TAG);
+	item->setPosition(pos_);
+
+
+	this->addChild(item, 2);
+}
+
+void GameLayer::createAK(Vec2 & pos_)
+{
+	Item* item = Item::create("AK47NOHANDS.png");
+	item->setName("AK47.png");
+	item->setPosition(pos_);
+
+	this->addChild(item, 2);
+}
+
+void GameLayer::createAmmo(Vec2 & pos_)
+{
+	Item* item = Item::create("Items/AKClip.png");
+	item->setName("AKClip.png");
+	item->getPhysicsBody()->setTag(16);
+	item->setPosition(pos_);
+
+	this->addChild(item, 2);
 }
 
 
@@ -480,13 +503,31 @@ void GameLayer::initLevel()
 	//desk->setScale(3.f);
 	desk->setPosition(640, 640);
 	desk->setLocalZOrder(getObjectZ(desk->getPosition()));
+	auto deskBody = PhysicsBody::createBox(Size(desk->getContentSize().width, 32));
+	deskBody->setDynamic(false);
+	deskBody->setContactTestBitmask(0xFFFFFFFF);
+	deskBody->setTag(WALL_TAG);
+	deskBody->setGroup(-3);
+	desk->setPhysicsBody(deskBody);
 	this->addChild(desk);
 
 	Sprite* dummy = Sprite::create("Tiles/Dummy_Left.png");
 	dummy->setLocalZOrder(300);
-	dummy->setPosition(1200, 640);
-	
+	dummy->setPosition(1030, 640);
+	auto dummyBody = PhysicsBody::createBox(dummy->getContentSize());
+	dummyBody->setDynamic(false);
+	dummyBody->setContactTestBitmask(0xFFFFFFFF);
+	dummyBody->setTag(WALL_TAG);
+	dummyBody->setGroup(-3);
+	dummy->setPhysicsBody(dummyBody);
+	dummy->setLocalZOrder(getObjectZ(dummy->getPosition()));
 	this->addChild(dummy);
+
+	Sprite* poster = Sprite::create("Tiles/poster.png");
+	poster->setPosition(640, 864);
+	poster->setLocalZOrder(getObjectZ(Vec2(640,764)));
+	this->addChild(poster);
+	
 }
 
 void GameLayer::findEnemyandHurt(Node* node)

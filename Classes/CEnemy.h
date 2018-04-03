@@ -9,6 +9,7 @@ class CEnemy : public Character
 public:
 	virtual bool init();
 	void initAnimations();
+	void initZombieAnimations();
 	CREATE_FUNC(CEnemy);
 
 	void setSpawn(Vec2 &);
@@ -19,6 +20,7 @@ public:
 	void exitSpawn(float);
 	void attackPlayer(float);
 	void setPlayer(CPlayer &);
+	void setZombie(bool);
 
 	void damageEnemy();
 	void removeEnemy();
@@ -34,6 +36,7 @@ private:
 	float movementTimer;
 	//A.I. variables
 	int mood;
+	bool isZombie;
 	bool pastSpawnGate;
 	CPlayer* player_;
 	Vec2 spawnPosition;

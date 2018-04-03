@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>frames</key>
+        <dict>
+            <key>frame1.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{49,101}</string>
+                <key>spriteSourceSize</key>
+                <string>{49,101}</string>
+                <key>textureRect</key>
+                <string>{{1,8},{49,101}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3 5 6 7 4 5 7 9 10 11 8 9 11 13 14 15 12 13 15 17 18 19 16 17 19</string>
+                <key>vertices</key>
+                <string>5 101 0 101 0 96 5 96 49 101 43 101 43 96 49 96 49 77 23 77 23 55 49 55 49 5 43 5 43 0 49 0 5 5 0 5 0 0 5 0</string>
+                <key>verticesUV</key>
+                <string>6 109 1 109 1 104 6 104 50 109 44 109 44 104 50 104 50 85 24 85 24 63 50 63 50 13 44 13 44 8 50 8 6 13 1 13 1 8 6 8</string>
+            </dict>
+            <key>frame2.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{49,101}</string>
+                <key>spriteSourceSize</key>
+                <string>{49,101}</string>
+                <key>textureRect</key>
+                <string>{{1,1},{49,101}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3 5 6 7 4 5 7 9 10 11 8 9 11 13 14 15 12 13 15 17 18 19 16 17 19</string>
+                <key>vertices</key>
+                <string>5 101 0 101 0 96 5 96 49 101 43 101 43 96 49 96 41 49 19 49 19 23 41 23 49 5 43 5 43 0 49 0 5 5 0 5 0 0 5 0</string>
+                <key>verticesUV</key>
+                <string>6 102 1 102 1 97 6 97 50 102 44 102 44 97 50 97 42 50 20 50 20 24 42 24 50 6 44 6 44 1 50 1 6 6 1 6 1 1 6 1</string>
+            </dict>
+            <key>frame3.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{49,101}</string>
+                <key>spriteSourceSize</key>
+                <string>{49,101}</string>
+                <key>textureRect</key>
+                <string>{{1,111},{49,101}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3 5 6 7 4 5 7 8 10 11 8 9 10</string>
+                <key>vertices</key>
+                <string>5 101 0 101 0 96 5 96 49 101 43 101 43 96 49 96 49 5 0 42 0 0 49 0</string>
+                <key>verticesUV</key>
+                <string>6 212 1 212 1 207 6 207 50 212 44 212 44 207 50 207 50 116 1 153 1 111 50 111</string>
+            </dict>
+            <key>frame4.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{49,101}</string>
+                <key>spriteSourceSize</key>
+                <string>{49,101}</string>
+                <key>textureRect</key>
+                <string>{{13,94},{49,101}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3 5 6 7 4 5 7 9 10 11 8 9 11 13 14 15 12 13 15 17 18 19 16 17 19</string>
+                <key>vertices</key>
+                <string>5 101 0 101 0 96 5 96 49 101 43 101 43 96 49 96 49 57 27 57 27 35 49 35 49 5 43 5 43 0 49 0 5 5 0 5 0 0 5 0</string>
+                <key>verticesUV</key>
+                <string>18 195 13 195 13 190 18 190 62 195 56 195 56 190 62 190 62 151 40 151 40 129 62 129 62 99 56 99 56 94 62 94 18 99 13 99 13 94 18 94</string>
+            </dict>
+            <key>frame5.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{49,101}</string>
+                <key>spriteSourceSize</key>
+                <string>{49,101}</string>
+                <key>textureRect</key>
+                <string>{{5,87},{49,101}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3 6 7 8 4 5 6 4 6 8 10 11 12 9 10 12 14 15 16 13 14 16</string>
+                <key>vertices</key>
+                <string>5 101 0 101 0 96 5 96 49 96 49 101 18 101 5 88 31 62 49 5 43 5 43 0 49 0 5 5 0 5 0 0 5 0</string>
+                <key>verticesUV</key>
+                <string>10 188 5 188 5 183 10 183 54 183 54 188 23 188 10 175 36 149 54 92 48 92 48 87 54 87 10 92 5 92 5 87 10 87</string>
+            </dict>
+            <key>idle.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{49,101}</string>
+                <key>spriteSourceSize</key>
+                <string>{49,101}</string>
+                <key>textureRect</key>
+                <string>{{1,8},{49,101}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3 5 6 7 4 5 7 9 10 11 8 9 11 13 14 15 12 13 15 17 18 19 16 17 19</string>
+                <key>vertices</key>
+                <string>5 101 0 101 0 96 5 96 49 101 43 101 43 96 49 96 49 77 23 77 23 55 49 55 49 5 43 5 43 0 49 0 5 5 0 5 0 0 5 0</string>
+                <key>verticesUV</key>
+                <string>6 109 1 109 1 104 6 104 50 109 44 109 44 104 50 104 50 85 24 85 24 63 50 63 50 13 44 13 44 8 50 8 6 13 1 13 1 8 6 8</string>
+            </dict>
+        </dict>
+        <key>metadata</key>
+        <dict>
+            <key>format</key>
+            <integer>3</integer>
+            <key>pixelFormat</key>
+            <string>RGBA8888</string>
+            <key>premultiplyAlpha</key>
+            <false/>
+            <key>realTextureFileName</key>
+            <string>zombie-attack.png</string>
+            <key>size</key>
+            <string>{63,213}</string>
+            <key>smartupdate</key>
+            <string>$TexturePacker:SmartUpdate:6d07c9e2cb005a864f985e42ee09a72f:efef4a13de680f6eb447ac2e1d77a904:ceb5711517d9cf020b44382beb2ea114$</string>
+            <key>textureFileName</key>
+            <string>zombie-attack.png</string>
+        </dict>
+    </dict>
+</plist>

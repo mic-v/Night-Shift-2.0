@@ -47,7 +47,7 @@ bool Weapon::init(const std::string & fileName)
 	{
 		ammo = 7;
 		maxCartridgeAmmo = 7;
-		totalAmmo = 0;
+		totalAmmo = 999;
 		isPistol_ = true;
 		this->setTag(PISTOLPICKUPTAG);
 		initPistolAnimations();
@@ -57,7 +57,7 @@ bool Weapon::init(const std::string & fileName)
 	{
 		ammo = 7;
 		maxCartridgeAmmo = 7;
-		totalAmmo = 0;
+		totalAmmo = 999;
 		isPistol_ = true;
 		this->setTag(PISTOLPICKUPTAG);
 		this->setName(PISTOLNAME);
@@ -67,12 +67,26 @@ bool Weapon::init(const std::string & fileName)
 	{
 		ammo = 30;
 		maxCartridgeAmmo = 30;
-		totalAmmo = 0;
+		totalAmmo = 30;
 		isPistol_ = false;
 		this->setTag(AKPICKUPTAG);
 		this->setName(AKNAME);
 		initAKAnimation();
 	}
+	if (fileName == "hand.png")
+	{
+		initZombieAnimation();
+		auto body = PhysicsBody::createBox(Size(32,32));
+		body->setRotationEnable(false);
+		body->setVelocityLimit(0);
+		body->setDynamic(false);
+		body->setTag(14);
+		body->setContactTestBitmask(0xFFFFFFFF);
+		this->setPhysicsBody(body);
+	}
+
+	auto contactListener = EventListenerPhysicsContact::create();
+	contactListener->onContactBegin = CC_CALLBACK_1(Weapon::onContactBegin, this);
 
 	muzzle = ParticleSystem::create("Particles/muzzleFlash.plist");
 	this->scheduleUpdate();
@@ -168,6 +182,24 @@ void Weapon::initAKAnimation()
 	spritecache->destroyInstance();
 }
 
+void Weapon::initZombieAnimation()
+{
+	auto spritecache = SpriteFrameCache::getInstance();
+	spritecache->addSpriteFramesWithFile("res/HDR/zombie-attack.plist");
+
+	Vector<SpriteFrame*> fireframes;
+	for (int i = 0; i < 5; i++)
+	{
+		stringstream ss;
+		ss << "frame" << i + 1 << ".png";
+		fireframes.pushBack(spritecache->getSpriteFrameByName(ss.str()));
+	}
+	auto animation = Animation::createWithSpriteFrames(fireframes, 0.03f);
+	animFire = Animate::create(animation);
+	animFire->retain();
+	animFire->setTag(FIRETAG);
+}
+
 
 void Weapon::setIfPlayer(bool set)
 {
@@ -194,16 +226,16 @@ void Weapon::enemyFire(const Vec2 & pos_, const Vec2 & dir)
 			Projectile* projectile;
 			if (isPistol_)
 			{
-				projectile = Projectile::create("0305Bullet.png");
-				//projectile->getPhysicsBody()->setCategoryBitmask(ENEMYBULLET_CATEGORY);
-				//projectile->getPhysicsBody()->setCollisionBitmask(MASK_ENEMYBULLET);
-				projectile->getPhysicsBody()->setTag(ENEMYBULLET_TAG);
-				projectile->getPhysicsBody()->setGroup(-1);
-				if (isPistol_)
-					projectile->setTexture("0305Bullet.png");
-				projectile->setShot(position_, dir_);
-				this->getParent()->getParent()->addChild(projectile);
+				projectile = Projectile::create("45CalBullet.png");
 			}
+			else
+			{
+				projectile = Projectile::create("45CalBullet.png");
+			}
+			projectile->getPhysicsBody()->setTag(ENEMYBULLET_TAG);
+			projectile->getPhysicsBody()->setGroup(-1);
+			projectile->setShot(position_, dir_);
+			this->getParent()->getParent()->addChild(projectile);
 			fired = true;
 			ammo--;
 			this->runAction(animFire);
@@ -287,7 +319,7 @@ void Weapon::update(float dt)
 				}
 				else if(this->getTag() == AKPICKUPTAG)
 				{
-					string tmp = to_string(ammo) + " / Infinite";
+					string tmp = to_string(ammo) + " / " + to_string(totalAmmo);
 					event2.setUserData((void*)tmp.c_str());
 					_eventDispatcher->dispatchEvent(&event2);
 				}
@@ -312,16 +344,19 @@ void Weapon::update(float dt)
 					this->setSpriteFrame(idleFrame);
 				}
 			}
-			
-			if (ammo <= 0)
+			else
 			{
-				AudioEngine::play2d("Sounds/Gun/outofammo.mp3", false);
+				EventCustom event("reload");
+				_eventDispatcher->dispatchEvent(&event);
 			}
 		}
 		else if (reloadState)
 		{
+			if (totalAmmo <= 0)
+			{
 
-			if (ammo != maxCartridgeAmmo)
+			}
+			else if (ammo != maxCartridgeAmmo)
 			{
 				reloading = true;
 				this->stopAllActions();
@@ -334,19 +369,29 @@ void Weapon::update(float dt)
 		{
 			if (this->getActionByTag(RELOADINGTAG) == nullptr)
 			{
-				ammo = maxCartridgeAmmo;
+
 				reloading = false;
 				this->setSpriteFrame(idleFrame);
 				EventCustom event2("ammo");
 				if (isPistol_)
 				{
+					ammo = maxCartridgeAmmo;
 					string tmp = to_string(ammo) + " / Infinite";
 					event2.setUserData((void*)tmp.c_str());
 					_eventDispatcher->dispatchEvent(&event2);
 				}
 				else
 				{
-					string tmp = to_string(ammo) + " / Infinite";
+
+					int leftover = (maxCartridgeAmmo - ammo);;
+					ammo += leftover;
+					totalAmmo -= leftover;
+					if (totalAmmo < 0)
+					{
+						ammo = ammo + totalAmmo;
+						totalAmmo = 0;
+					}
+					string tmp = to_string(ammo) + " / " + to_string(totalAmmo);
 					event2.setUserData((void*)tmp.c_str());
 					_eventDispatcher->dispatchEvent(&event2);
 				}
@@ -365,18 +410,36 @@ void Weapon::displayEquip()
 	_eventDispatcher->dispatchEvent(&event);
 
 	EventCustom event2("ammo");
-	//if (isPistol_)
+	if (isPistol_)
 	{
 		string tmp = to_string(ammo) + " / Infinite";
+		event2.setUserData((void*)tmp.c_str());
+		_eventDispatcher->dispatchEvent(&event2);
+	}
+	else
+	{
+		string tmp = to_string(ammo) + " / " + to_string(totalAmmo);
 		event2.setUserData((void*)tmp.c_str());
 		_eventDispatcher->dispatchEvent(&event2);
 	}
 
 }
 
-bool Weapon::onContactBegin(PhysicsContact &)
+void Weapon::addAmmo()
 {
-	return false;
+	totalAmmo += 10;
+}
+
+bool Weapon::onContactBegin(PhysicsContact & contact)
+{
+	auto nodeA = contact.getShapeA()->getBody()->getNode();
+	auto nodeB = contact.getShapeB()->getBody()->getNode();
+	if (nodeA && nodeB)
+	{
+	
+	}
+	return true;
+
 }
 
 bool Weapon::onContactPost(PhysicsContact &)

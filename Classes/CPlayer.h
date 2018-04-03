@@ -28,15 +28,16 @@ public:
 
 	void damage();
 	void heal();
-
-
+	bool hasAk();
+	bool hasM16();
+	bool hasPistol();
 private:
 	float sprintDuration;
 	SpriteFrame* idleFrameL;
 	Sprite* border;
 	Sprite* bar;
 	ProgressTimer* dashBar;
-	bool hasPistol;
+	bool hasPistol_;
 };
 
 #endif // !_CPLAYER_H_

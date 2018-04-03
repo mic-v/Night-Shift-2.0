@@ -41,8 +41,8 @@ using namespace cocos2d;
 /*---------------------------------------------------------- */
 //LEVEL SETUP
 /*---------------------------------------------------------- */
-#define MAXTIME 60
-#define MAX_PLAYER_HEALTH 20
+#define MAXTIME 120
+#define MAX_PLAYER_HEALTH 30
 
 #define PISTOLPICKUPTAG 1000
 #define AKPICKUPTAG 1001

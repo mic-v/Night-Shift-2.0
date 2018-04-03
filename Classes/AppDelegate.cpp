@@ -106,7 +106,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	Director *director = Director::getInstance();
 	//director->setProjection(Director::Projection::_2D);
 	//director->setDepthTest(true);
-	director->setDisplayStats(true);
+	//director->setDisplayStats(true);
 	DISPLAY->init(1920.0f, 1080.0f, "Night Shift", false);
 	//auto scene = GameScene::createScene();
 	auto scene = SplashScene::createScene();

@@ -51,7 +51,7 @@ bool CPlayer::init(const std::string & fileName)
 	cWeapNum = 0;
 	isMoving = false;
 	isSprinting = false;
-	hasPistol = false;
+	hasPistol_ = false;
 	health = MAX_PLAYER_HEALTH;
 
 	initAnimations();
@@ -255,8 +255,8 @@ void CPlayer::handleMovement(float dt)
 
 	if (isSprinting)
 	{
-		this->getPhysicsBody()->setVelocityLimit(VELOCITYLIMIT * 2);
-		speed = 120;
+		this->getPhysicsBody()->setVelocityLimit(VELOCITYLIMIT * 3);
+		speed = 150;
 		sprintDuration += dt;
 		if (sprintDuration >= 0.5f)
 		{
@@ -448,6 +448,24 @@ bool CPlayer::onContactBegin(PhysicsContact & contact)
 			nodeB->runAction(RemoveSelf::create());
 			heal();
 		}
+		if (nodeA->getPhysicsBody()->getTag() == 14 && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
+		{
+			damage();
+		}
+		if (nodeB->getPhysicsBody()->getTag() == 14 && nodeA->getPhysicsBody()->getTag() == PLAYER_TAG)
+		{
+			damage();
+		}
+		if (nodeA->getPhysicsBody()->getTag() == 16 && nodeB->getPhysicsBody()->getTag() == PLAYER_TAG)
+		{
+			nodeA->runAction(RemoveSelf::create());
+			weapons[1]->addAmmo();
+		}
+		if (nodeB->getPhysicsBody()->getTag() == 16 && nodeA->getPhysicsBody()->getTag() == PLAYER_TAG)
+		{
+			nodeB->runAction(RemoveSelf::create());
+			weapons[1]->addAmmo();
+		}
 	}
 	return true;
 }
@@ -466,9 +484,15 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 				weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f - 10.f));
 				weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
 				if (nodeA->getName() == "AK47.png")
+				{
 					weapon->setAnchorPoint(Vec2(0.25f, 0.5f));
+					hasAk_ = true;
+				}
 				else
+				{
 					weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
+					hasPistol_ = true;
+				}
 
 				if (weapons.size() == 0)
 				{
@@ -496,9 +520,15 @@ bool CPlayer::onContactPost(PhysicsContact & contact)
 				weapon->setPosition(Vec2(this->getContentSize().width * 0.5f, this->getContentSize().height * 0.5f - 10.f));
 
 				if (nodeB->getName() == "AK47.png")
+				{
 					weapon->setAnchorPoint(Vec2(0.25f, 0.5f));
+					hasAk_ = true;
+				}
 				else
+				{
 					weapon->setAnchorPoint(Vec2(-0.25f, 0.5f));
+					hasPistol_ = true;
+				}
 
 				if (weapons.size() == 0)
 				{
@@ -552,12 +582,35 @@ void CPlayer::damage()
 
 void CPlayer::heal()
 {
-	if (health <= 20)
+	if (this->health < 30)
 	{
 		this->health++;
-		float* tmp = &(this->health);
-		EventCustom event("health");
-		event.setUserData((void*)&(this->health));
-		_eventDispatcher->dispatchEvent(&event);
 	}
+	if (this->health < 30)
+	{
+		this->health++;
+	}
+	if (this->health < 30)
+	{
+		this->health++;
+	}
+	float* tmp = &(this->health);
+	EventCustom event("health");
+	event.setUserData((void*)&(this->health));
+	_eventDispatcher->dispatchEvent(&event);
+}
+
+bool CPlayer::hasAk()
+{
+	return hasAk_;
+}
+
+bool CPlayer::hasM16()
+{
+	return hasM16_;
+}
+
+bool CPlayer::hasPistol()
+{
+	return hasPistol_;
 }
